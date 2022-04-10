@@ -60,7 +60,7 @@ exports.form = (req, res) => {
 
 // Afegir usuari
 exports.create = (req, res) => {
-  const { nom, cognoms, email, telefon, coeficient, estat, comentaris } = req.body;
+  var { nom, cognoms, email, telefon, coeficient, estat, comentaris } = req.body;
   let searchTerm = req.body.search;
   if (coeficient > 1 || coeficient < 0 || coeficient == '') {
     //res.render('add-user', { alert2: 'Error. Indica un coeficient entre 0 i 1' });
@@ -73,13 +73,14 @@ exports.create = (req, res) => {
     const hour = data.getHours() * 100;
     const min = data.getMinutes();
     const data2 = year + month + day + hour + min + ''
+    coeficient = coeficient.replace(",", ".");
     conn.all('INSERT INTO usuari(nom, cognoms, email, telefon, coeficient, estat, comentaris, dataAlta, dataActualitzacio) VALUES (?,?,?,?,?,?,?,?,?)', [nom, cognoms, email, telefon, coeficient, estat, comentaris, data2, data2], (err, rows) => {
       if (!err) {
         calculaCoeficient(function getData(result) { 
           alert2 = result[1];       
           cT = result[0];         
           // res.render('add-user', {alert2, alert3: 'Usuari afegit correctament.' });
-          res.redirect('/?alert3=' +`S'ha creat correctament un nou usuari: ${nom} ${cognoms}`);
+          res.redirect('/?alert3=' +`S'ha creat correctament un usuari nou: ${nom} ${cognoms}`);
         }); 
         
       } else {
@@ -109,7 +110,7 @@ exports.edit = (req, res) => {
 
 // Actualitzar usuari
 exports.update = (req, res) => {
-  const { nom, cognoms, email, telefon, coeficient, estat, comentaris } = req.body;
+  var { nom, cognoms, email, telefon, coeficient, estat, comentaris } = req.body;
   const data = new Date();
   const year = data.getFullYear() * 100000000;
   const month = (data.getMonth() + 1) * 1000000;
@@ -117,6 +118,7 @@ exports.update = (req, res) => {
   const hour = data.getHours() * 100;
   const min = data.getMinutes();
   const data2 = year + month + day + hour + min + ''
+  coeficient = coeficient.replace(",", ".");
   // Update Sqlite
   conn.all('UPDATE usuari SET nom = ?, cognoms = ?, email = ?, telefon = ?, coeficient = ?, estat = ?, comentaris = ?, dataActualitzacio = ? WHERE id = ?', [nom, cognoms, email, telefon, coeficient, estat, comentaris, data2, req.params.id], (err, rows) => {
     // Si no hi ha error        
@@ -127,7 +129,7 @@ exports.update = (req, res) => {
             alert2 = result[1];       
             cT = result[0];         
             // res.render('edit-user', { rows, alert3: `L'usuari ${nom} s'ha actualitzat.`, alert2 });
-            res.redirect('/?alert3=' +`L'usuari ${nom} ${cognoms} s'ha actualitzat`);
+            res.redirect('/?alert3=' +`Les dades de l'usuari ${nom} ${cognoms} s'han actualitzat correctament`);
           });           
         } else {
           console.log(err);

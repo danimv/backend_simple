@@ -13,48 +13,42 @@
 
 <div class="row">
   <div class="col-5">
-    <h2>Usuaris</h2>
+    <h4 style="color:rgb(9, 120, 231);padding-top: 3%;">USUARIS</h4>
   </div>
   <div class="col-3">     
-    <h5 id="cT" style="padding-top: 7%;"> Coeficient total : {{cT}}</h5>    
+    <h5 id="cT" style="color:rgb(9, 120, 231); padding-top: 7%;"> Coeficient total : {{cT}}</h5>    
   </div>
   <div class="col-4 d-flex justify-content-end">
     <a href="/adduser" type="button" class="btn btn-primary align-self-center">+ crear usuari</a>
   </div>
 </div>
 
-<table class="table table-bordered" style="font-size:smaller;">
+<table class="table table-bordered" style="font-size:medium;">
   <thead class="thead-dark">
     <tr>
       <th scope="col">Id</th>
-       <th scope="col">Actualització</th>
       <th scope="col">Nom</th>
       <th scope="col">Cognoms</th>
       <th scope="col">Email</th>
-      <th scope="col">Telèfon</th>
       <th scope="col">Coeficient</th>
       <th scope="col">Estat</th>
-      <th scope="col">Comentaris</th>
       <th scope="col" style="text-align: center;">Accions</th>
     </tr>
   </thead>
   <tbody>    
     {{#each rows}}
       <tr>
-      <th scope="row">{{this.id}}</th>
-      <td>{{this.dataActualitzacio}}</td>
+      <th scope="row">{{this.id}}</th>      
       <td>{{this.nom}}</td>
       <td>{{this.cognoms}}</td>
       <td>{{this.email}}</td>
-      <td>{{this.telefon}}</td>
       <td style="text-align: center;"><b>{{this.coeficient}}</b></td>
-      <td>{{this.estat}}</td>
-      <td>{{this.comentaris}}</td>
-      <td style="width: 24%;" class="text-end">
-        <a style="font-size:110%"; href="/viewuser/{{this.id}}" type="button" class="btn btn-light btn"><i style="font-size: 95%;" class="bi bi-eye 2xs"></i> Info</a>
-        <a style="font-size:110%"; href="/edituser/{{this.id}}" type="button" class="btn btn-light btn"><i style="font-size: 95%;"  class="bi bi-pencil"></i>
+      <td>{{this.estat}}</td>      
+      <td style="width: 28%;" class="text-end">
+        <a style="font-size:100%"; href="/viewuser/{{this.id}}" type="button" class="btn btn-light btn"><i style="font-size: 115%;" class="bi bi-eye 2xs"></i> Info</a>
+        <a style="font-size:100%"; href="/edituser/{{this.id}}" type="button" class="btn btn-light btn"><i style="font-size: 115%;"  class="bi bi-pencil"></i>
           Edita</a>
-        <a style="font-size:110%"; href="/{{this.id}}" type="button" class="btn btn-light btn"><i style="font-size: 95%;"  class="bi bi-person-x"></i> Elimina</a>
+        <a style="font-size:100%"; href="/{{this.id}}" type="button" class="btn btn-light btn"><i style="font-size: 115%;"  class="bi bi-person-x"></i> Elimina</a>
       </td>
     </tr>
     {{/each}}
