@@ -44,7 +44,6 @@ exports.form = (req, res) => {
 exports.create = (req, res) => {
   const { nom, cognoms, email, telefon, coeficient, estat, comentaris} = req.body;
   let searchTerm = req.body.search;
-
   // User the connection
   // conn.all('INSERT INTO usuari SET nom = ?, cognoms = ?, email = ?, telefon = ?, coeficient = ?, estat = ?, comentaris = ?', [nom, cognoms, email, telefon, coeficient, estat, comentaris], (err, rows) => {
     conn.all('INSERT INTO usuari(nom, cognoms, email, telefon, coeficient, estat, comentaris) VALUES (?,?,?,?,?,?,?)', [nom, cognoms, email, telefon, coeficient, estat, comentaris], (err, rows) => {  

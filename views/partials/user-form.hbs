@@ -22,10 +22,25 @@
       <label for="floatingInput">Telèfon</label>
     </div>
   </div>
+   <div class="col-6">
+    <div class="form-floating mb-3">
+      <input type="text" class="form-control" id="floatingInput" value="{{this.coeficient}}" placeholder="Coeficient" name="coeficient">
+      <label for="floatingInput">Coeficient</label>
+    </div>
+  </div>
+  <div class="col-6">
+    <div class="form-floating mb-3">
+       <select class="form-control" id="select1" value="{{this.estat}}" placeholder="Estat" name="estat">
+      <option value="Actiu">Actiu</option>
+      <option value="Baixa">Baixa</option>
+      </select>
+      <label for="floatingInput">Estat</label>
+    </div>
+  </div>
   <div class="col-12">
     <div class="form-floating mb-3">
       <textarea class="form-control" placeholder="Comentaris" id="comments" name="comentaris" style="height: 200px">{{this.comentaris}}</textarea>
-      <label for="comments">Comemtaris</label>
+      <label for="comments">Comentaris</label>
     </div>
   </div>
   <div class="col-12 d-grid">
