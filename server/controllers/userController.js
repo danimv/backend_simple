@@ -9,7 +9,7 @@ let conn = new sqlite3.Database('server/controllers/comunitat.db', sqlite3.OPEN_
 // View Users
 exports.view = (req, res) => {
   // User the connection
-  conn.all('SELECT * FROM DD1_hores', (err, rows) => {
+  conn.all('SELECT * FROM usuari', (err, rows) => {
   // connection.query('SELECT * FROM user WHERE status = "active"', (err, rows) => {
     // When done with the connection, release it
     if (!err) {
@@ -18,7 +18,7 @@ exports.view = (req, res) => {
     } else {
       console.log(err);
     }
-    console.log('The data from user table: \n', rows);
+    console.log('Les dades de la base de dades: \n', rows);
   });
 }
 
@@ -26,13 +26,13 @@ exports.view = (req, res) => {
 exports.find = (req, res) => {
   let searchTerm = req.body.search;
   // User the connection
-  connection.query('SELECT * FROM user WHERE first_name LIKE ? OR last_name LIKE ?', ['%' + searchTerm + '%', '%' + searchTerm + '%'], (err, rows) => {
+  connection.query('SELECT * FROM usuari WHERE nom LIKE ? OR cognom LIKE ?', ['%' + searchTerm + '%', '%' + searchTerm + '%'], (err, rows) => {
     if (!err) {
       res.render('home', { rows });
     } else {
       console.log(err);
     }
-    console.log('The data from user table: \n', rows);
+    console.log('Les dades de la búsquedas: \n', rows);
   });
 }
 
@@ -42,19 +42,19 @@ exports.form = (req, res) => {
 
 // Add new user
 exports.create = (req, res) => {
-  const { first_name, last_name, email, phone, comments } = req.body;
+  const { nom, cognoms, email, telefon, coeficient, estat, comentaris} = req.body;
   let searchTerm = req.body.search;
 
   // User the connection
-  conn.all('INSERT INTO user SET first_name = ?, last_name = ?, email = ?, phone = ?, comments = ?', [first_name, last_name, email, phone, comments], (err, rows) => {
+  // conn.all('INSERT INTO usuari SET nom = ?, cognoms = ?, email = ?, telefon = ?, coeficient = ?, estat = ?, comentaris = ?', [nom, cognoms, email, telefon, coeficient, estat, comentaris], (err, rows) => {
+    conn.all('INSERT INTO usuari(nom, cognoms, email, telefon, coeficient, estat, comentaris) VALUES (?,?,?,?,?,?,?)', [nom, cognoms, email, telefon, coeficient, estat, comentaris], (err, rows) => {  
     if (!err) {
-      res.render('add-user', { alert: 'User added successfully.' });
+      res.render('add-user', { alert: 'Usuari afegit correctament.' });
     } else {
       console.log(err);
     }
-    console.log('The data from user table: \n', rows);
-  });
-}
+    console.log('Editant l`usuari: \n', rows);
+  });}
 
 
 // Edit user
