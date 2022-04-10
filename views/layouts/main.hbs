@@ -35,27 +35,27 @@
     </div>
   </nav>
 
-  <div class="container pt-5 pb-5">
+  <div class="container pt-3">
     {{#if alert}}
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-  Usuari donat de baixa
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{{/if}}
-{{#if alert2}}
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-  El coeficient total no és igual a 1. Revisa els coeficients de tots els usuaris
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{{/if}}
-{{#if alert3}}
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-  {{alert3}}
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{{/if}}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      {{alert}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {{/if}}
+    {{#if alert2}}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      El coeficient total no és igual a 1. Revisa els coeficients de tots els usuaris
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {{/if}}
+    {{#if alert3}}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      {{alert3}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {{/if}}
 
-      {{{body}}}
+    {{{body}}}
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"

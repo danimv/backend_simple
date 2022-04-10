@@ -13,7 +13,7 @@
 
 <div class="row">
   <div class="col-5">
-    <h1>Usuaris</h1>
+    <h2>Usuaris</h2>
   </div>
   <div class="col-3">     
     <h5 id="cT" style="padding-top: 7%;"> Coeficient total : {{cT}}</h5>    
@@ -23,7 +23,7 @@
   </div>
 </div>
 
-<table class="table table-bordered">
+<table class="table table-bordered" style="font-size:smaller;">
   <thead class="thead-dark">
     <tr>
       <th scope="col">Id</th>
@@ -50,11 +50,11 @@
       <td style="text-align: center;"><b>{{this.coeficient}}</b></td>
       <td>{{this.estat}}</td>
       <td>{{this.comentaris}}</td>
-      <td class="text-end">
-        <a href="/viewuser/{{this.id}}" type="button" class="btn btn-light btn-small"><i class="bi bi-eye"></i> Info</a>
-        <a href="/edituser/{{this.id}}" type="button" class="btn btn-light btn-small"><i class="bi bi-pencil"></i>
+      <td style="width: 24%;" class="text-end">
+        <a style="font-size:110%"; href="/viewuser/{{this.id}}" type="button" class="btn btn-light btn"><i style="font-size: 95%;" class="bi bi-eye 2xs"></i> Info</a>
+        <a style="font-size:110%"; href="/edituser/{{this.id}}" type="button" class="btn btn-light btn"><i style="font-size: 95%;"  class="bi bi-pencil"></i>
           Edita</a>
-        <a href="/{{this.id}}" type="button" class="btn btn-light btn-small"><i class="bi bi-person-x"></i> Elimina</a>
+        <a style="font-size:110%"; href="/{{this.id}}" type="button" class="btn btn-light btn"><i style="font-size: 95%;"  class="bi bi-person-x"></i> Elimina</a>
       </td>
     </tr>
     {{/each}}
