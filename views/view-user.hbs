@@ -5,11 +5,11 @@
   </ol>
 </nav>
 
-<div class="view-user p-5">
+<div class="view-user p-3">
   {{#each rows}}
   <div class="row mb-5">
     <div class="col text-center">
-      <h3>{{this.first_name}} {{this.last_name}}</h3>
+      <h3>Usuari {{this.id}} - {{this.nom}} {{this.cognoms}}</h3>
     </div>
   </div>
   <div class="row">
@@ -17,30 +17,44 @@
       <table class="table">
         <thead>
           <tr>
-            <th scope="col">Nom</th>
-            <th scope="col">Cognom</th>
-            <th scope="col">Email</th>
-            <th scope="col">Telèfon</th>
+            <th scope="col">Data alta</th>
+            <!--<th scope="col">Data actualització</th>-->
+      <th scope="col">Nom</th>
+      <th scope="col">Cognoms</th>
+      <th scope="col">Email</th>
+      <th scope="col">Telèfon</th>
+      <th scope="col">Coeficient</th>
+      <th scope="col">Estat</th>
+      <th style="text-align: center;" scope="col">Accions</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <th scope="row">{{this.first_name}}</th>
-            <td>{{this.last_name}}</td>
+          <tr>            
+            <th scope="row">{{this.dataAlta}}</th>
+            <!--<th>{{this.dataModificacio}}</th>-->
+            <td>{{this.nom}}</td>
+            <td>{{this.cognoms}}</td>
             <td>{{this.email}}</td>
-            <td>{{this.phone}}</td>
+            <td>{{this.telefon}}</td>
+            <td>{{this.coeficient}}</td>
+            <td>{{this.estat}}</td>           
+            <td class="text-end">
+        <a href="/edituser/{{this.id}}" type="button" class="btn btn-light btn-small"><i class="bi bi-pencil"></i>
+          Edita</a>
+        <a href="/{{this.id}}" type="button" class="btn btn-light btn-small"><i class="bi bi-person-x"></i> Elimina</a>
+      </td>
           </tr>
         </tbody>
       </table>
     </div>
     <div class="row">
       <div class="col">
-        <b>Comments</b>
+        <b>Comentaris</b>
       </div>
     </div>
     <div class="row">
       <div class="col">
-        {{this.comments}}
+        {{this.comentaris}}
       </div>
     </div>
   </div>

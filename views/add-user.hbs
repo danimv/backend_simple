@@ -12,6 +12,13 @@
 </div>
 {{/if}}
 
-<form class="row g-3 needs-validation" method="POST" action="/adduser" novalidate>
+{{#if alert2}}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  {{alert2}}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{{/if}}
+
+<form id="dadesUsuari" name="dadesUsuari" class="row g-3 needs-validation" method="POST" onsubmit="return validate()" action="/adduser">
   {{> user-form}}
 </form>

@@ -39,10 +39,40 @@
   </div>
   <div class="col-12">
     <div class="form-floating mb-3">
-      <textarea class="form-control" placeholder="Comentaris" id="comments" name="comentaris" style="height: 200px">{{this.comentaris}}</textarea>
+      <textarea class="form-control" placeholder="Comentaris" id="comments" name="comentaris" style="height: 100px">{{this.comentaris}}</textarea>
       <label for="comments">Comentaris</label>
     </div>
   </div>
   <div class="col-12 d-grid">
-    <button class="btn btn-primary" type="submit">Crear</button>
+    <button class="btn btn-primary" type="submit">ENVIA</button>
   </div>
+<script>
+    function validate() {      
+        var name = document.forms["dadesUsuari"]["nom"];
+        var cognom = document.forms["dadesUsuari"]["cognoms"];
+        var email = document.forms["dadesUsuari"]["email"];
+        var coeficient = document.forms["dadesUsuari"]["coeficient"];
+         
+        if (name.value == "") {
+          alert("Introdueix el nom");  
+          name.focus();        
+          return false;
+        }  
+        if (cognom.value == "") {
+          alert("Introdueix el cognom");  
+            cognom.focus();
+            return false;
+        }  
+        if (email.value == "") {
+          alert("Introdueix el correu electrònic");  
+            email.focus();
+            return false;
+        }  
+        if (coeficient.value > 1 || coeficient.value < 0 || coeficient.value == "") {
+          alert("Introdueix un coeficient entre 0 i 1");  
+            phone.focus();
+            return false;
+        }       
+        
+    }
+</script>

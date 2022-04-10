@@ -12,9 +12,9 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/">Administració comunitat energètica</a>
+      <a class="navbar-brand" href="/">PROSUM</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -22,12 +22,12 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/">Home</a>
+            <a class="nav-link active" aria-current="page" href="/">Inici</a>
           </li>
         </ul>
 
         <form class="d-flex" method="POST" action="/" novalidate>
-          <input class="form-control me-2" type="search" placeholder="busca" name="search" aria-label="Search">
+          <input class="form-control me-2" type="search" placeholder="" name="search" aria-label="Search">
           <button class="btn btn-outline-light" type="submit">Buscar</button>
         </form>
 
@@ -36,6 +36,18 @@
   </nav>
 
   <div class="container pt-5 pb-5">
+    {{#if alert}}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  Usuari donat de baixa
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{{/if}}
+{{#if alert2}}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  El coeficient total no és igual a 1. Revisa els coeficients de tots els usuaris
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{{/if}}
       {{{body}}}
   </div>
 
