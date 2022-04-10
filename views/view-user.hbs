@@ -9,7 +9,7 @@
   {{#each rows}}
   <div class="row mb-5">
     <div class="col text-center">
-      <h3>Usuari {{this.id}} - {{this.nom}} {{this.cognoms}}</h3>
+      <h3>Usuari {{this.idUsuari}} - {{this.nom}} {{this.cognoms}}</h3>
     </div>
   </div>
   <div class="row">
@@ -39,9 +39,9 @@
             <td>{{this.coeficient}}</td>
             <td>{{this.estat}}</td>           
             <td class="text-end">
-        <a href="/edituser/{{this.id}}" type="button" class="btn btn-light btn-small"><i class="bi bi-pencil"></i>
+        <a href="/edituser/{{this.idUsuari}}" type="button" class="btn btn-light btn-small"><i class="bi bi-pencil"></i>
           Edita</a>
-        <a href="/{{this.id}}" type="button" class="btn btn-light btn-small"><i class="bi bi-person-x"></i> Elimina</a>
+        <a href="/{{this.idUsuari}}" type="button" class="btn btn-light btn-small"><i class="bi bi-person-x"></i> Elimina</a>
       </td>
           </tr>
         </tbody>

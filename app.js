@@ -4,7 +4,7 @@ const exphbs = require('express-handlebars');
 require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 5001;
+const port = process.env.PORT || 5002;
 
 // Parsing middleware
 // Parse application/x-www-form-urlencoded
@@ -25,5 +25,7 @@ app.set('view engine', '.hbs');
 
 const routes = require('./server/routes/user');
 app.use('/', routes);
+const routes2 = require('./server/routes/comunitat');
+app.use('/comunitat/', routes2);
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

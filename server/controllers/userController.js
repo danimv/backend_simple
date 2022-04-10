@@ -15,9 +15,9 @@ exports.view = (req, res) => {
     if (!err) {
       let alert = req.query.alert;
       let alert3 = req.query.alert3;
-      calculaCoeficient(function getData(result) { 
-        alert2 = result[1];       
-        cT = result[0];         
+      calculaCoeficient(function getData(result) {
+        alert2 = result[1];
+        cT = result[0];
         res.render('home', { rows, alert, alert2, alert3, cT });
       });
     } else {
@@ -32,16 +32,16 @@ exports.find = (req, res) => {
   // Select Sqlite
   conn.all('SELECT * FROM usuari WHERE nom LIKE ? OR cognoms LIKE ?', ['%' + searchTerm + '%', '%' + searchTerm + '%'], (err, rows) => {
     if (!err) {
-      calculaCoeficient(function getData(result) { 
-        alert2 = result[1];       
-        cT = result[0];      
-        if(rows.length == 0){
+      calculaCoeficient(function getData(result) {
+        alert2 = result[1];
+        cT = result[0];
+        if (rows.length == 0) {
           msg = 'No hi ha resultats per aquesta búsqueda: ';
-        }else{
+        } else {
           msg = 'Es mostren els resultats de la búsqueda: ';
         }
-        res.render('home', { rows, alert2, alert3: `${msg}` + `${searchTerm}`});
-      });      
+        res.render('home', { rows, alert2, alert3: `${msg}` + `${searchTerm}` });
+      });
     } else {
       console.log(err);
     }
@@ -51,11 +51,11 @@ exports.find = (req, res) => {
 
 // Carregar la pagina afegir usuari
 exports.form = (req, res) => {
-  calculaCoeficient(function getData(result) { 
-    alert2 = result[1];       
-    cT = result[0];         
-    res.render('add-user', {alert2});
-  }); 
+  calculaCoeficient(function getData(result) {
+    alert2 = result[1];
+    cT = result[0];
+    res.render('add-user', { alert2 });
+  });
 }
 
 // Afegir usuari
@@ -76,13 +76,19 @@ exports.create = (req, res) => {
     coeficient = coeficient.replace(",", ".");
     conn.all('INSERT INTO usuari(nom, cognoms, email, telefon, coeficient, estat, comentaris, dataAlta, dataActualitzacio) VALUES (?,?,?,?,?,?,?,?,?)', [nom, cognoms, email, telefon, coeficient, estat, comentaris, data2, data2], (err, rows) => {
       if (!err) {
-        calculaCoeficient(function getData(result) { 
-          alert2 = result[1];       
-          cT = result[0];         
-          // res.render('add-user', {alert2, alert3: 'Usuari afegit correctament.' });
-          res.redirect('/?alert3=' +`S'ha creat correctament un usuari nou: ${nom} ${cognoms}`);
-        }); 
-        
+        //idUsuari = rows[rows.length].idUsuari;
+        conn.all('INSERT INTO coeficient(idUsuari, coeficient, data) VALUES (?,?,?)', [1, coeficient, data2], (err, rows) => {
+          if (!err) {
+            calculaCoeficient(function getData(result) {
+              alert2 = result[1];
+              cT = result[0];
+              // res.render('add-user', {alert2, alert3: 'Usuari afegit correctament.' });
+              res.redirect('/?alert3=' + `S'ha creat correctament un usuari nou: ${nom} ${cognoms}`);
+            });
+          } else {
+            console.log(err);
+          }
+        });
       } else {
         console.log(err);
       }
@@ -94,13 +100,13 @@ exports.create = (req, res) => {
 // Editar usuari
 exports.edit = (req, res) => {
   // Select Sqlite
-  conn.all('SELECT * FROM usuari WHERE id = ?', [req.params.id], (err, rows) => {
+  conn.all('SELECT * FROM usuari WHERE idUsuari = ?', [req.params.idUsuari], (err, rows) => {
     if (!err) {
-      calculaCoeficient(function getData(result) { 
-        alert2 = result[1];       
-        cT = result[0];         
-        res.render('edit-user', { rows, alert2});
-      });      
+      calculaCoeficient(function getData(result) {
+        alert2 = result[1];
+        cT = result[0];
+        res.render('edit-user', { rows, alert2 });
+      });
     } else {
       console.log(err);
     }
@@ -120,20 +126,20 @@ exports.update = (req, res) => {
   const data2 = year + month + day + hour + min + ''
   coeficient = coeficient.replace(",", ".");
   // Update Sqlite
-  conn.all('UPDATE usuari SET nom = ?, cognoms = ?, email = ?, telefon = ?, coeficient = ?, estat = ?, comentaris = ?, dataActualitzacio = ? WHERE id = ?', [nom, cognoms, email, telefon, coeficient, estat, comentaris, data2, req.params.id], (err, rows) => {
+  conn.all('UPDATE usuari SET nom = ?, cognoms = ?, email = ?, telefon = ?, coeficient = ?, estat = ?, comentaris = ?, dataActualitzacio = ? WHERE idUsuari = ?', [nom, cognoms, email, telefon, coeficient, estat, comentaris, data2, req.params.idUsuari], (err, rows) => {
     // Si no hi ha error        
-    if (!err) {       
-      conn.all('SELECT * FROM usuari WHERE id = ?', [req.params.id], (err, rows) => {
+    if (!err) {
+      conn.all('SELECT * FROM usuari WHERE idUsuari = ?', [req.params.idUsuari], (err, rows) => {
         if (!err) {
-          calculaCoeficient(function getData(result) { 
-            alert2 = result[1];       
-            cT = result[0];         
+          calculaCoeficient(function getData(result) {
+            alert2 = result[1];
+            cT = result[0];
             // res.render('edit-user', { rows, alert3: `L'usuari ${nom} s'ha actualitzat.`, alert2 });
-            res.redirect('/?alert3=' +`Les dades de l'usuari ${nom} ${cognoms} s'han actualitzat correctament`);
-          });           
+            res.redirect('/?alert3=' + `Les dades de l'usuari ${nom} ${cognoms} s'han actualitzat correctament`);
+          });
         } else {
           console.log(err);
-        }        
+        }
       });
     } else {
       console.log(err);
@@ -155,10 +161,10 @@ exports.delete = (req, res) => {
   //   console.log('The data from user table: \n', rows);
   // });
   // Hide a record
-  conn.all('UPDATE usuari SET estat = ? WHERE id = ?', ['Baixa', req.params.id], (err, rows) => {
+  conn.all('UPDATE usuari SET estat = ? WHERE idUsuari = ?', ['Baixa', req.params.idUsuari], (err, rows) => {
     if (!err) {
-      let removedUser = encodeURIComponent('Usuari donat de baixa.');             
-      res.redirect('/?alert=' +`L'usuari amd id ${req.params.id} s'ha donat de baixa`);          
+      let removedUser = encodeURIComponent('Usuari donat de baixa.');
+      res.redirect('/?alert=' + `L'usuari amd id ${req.params.idUsuari} s'ha donat de baixa`);
     } else {
       console.log(err);
     }
@@ -170,12 +176,12 @@ exports.delete = (req, res) => {
 // Vista usuari
 exports.viewall = (req, res) => {
   // Select Sqlite
-  conn.all('SELECT * FROM usuari WHERE id = ?', [req.params.id], (err, rows) => {
+  conn.all('SELECT * FROM usuari WHERE idUsuari = ?', [req.params.idUsuari], (err, rows) => {
     if (!err) {
-      calculaCoeficient(function getData(result) { 
-        alert2 = result[1];       
-        cT = result[0];  
-      res.render('view-user', { rows, alert2, cT });
+      calculaCoeficient(function getData(result) {
+        alert2 = result[1];
+        cT = result[0];
+        res.render('view-user', { rows, alert2, cT });
       });
     } else {
       console.log(err);
@@ -187,21 +193,20 @@ exports.viewall = (req, res) => {
 //Funcio calcul coeficient
 function calculaCoeficient(callback) {
   conn.all('SELECT * FROM usuari WHERE estat = "Actiu"', (err, rows) => {
-    let result=[];
+    let result = [];
     cT = 0;
     // Calcul coeficient total
     rows.forEach(row => {
       cT = cT + row.coeficient;
     });
     cT = cT.toFixed(5);
-    result[0]=cT;
+    result[0] = cT;
     console.log(cT);
     if (cT > 1 || cT < 1) {
-      result[1]= true;
+      result[1] = true;
     } else {
-      result[1]= false;
-    }         
-    console.log(result); 
+      result[1] = false;
+    }    
     callback(result);
   });
 
