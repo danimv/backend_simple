@@ -16,7 +16,7 @@
     <h1>Usuaris</h1>
   </div>
   <div class="col-3">     
-    <h5 id="cT" style="padding-top: 7%;"> Coeficient total : {{coeficientTotal}}</h5>    
+    <h5 id="cT" style="padding-top: 7%;"> Coeficient total : {{cT}}</h5>    
   </div>
   <div class="col-4 d-flex justify-content-end">
     <a href="/adduser" type="button" class="btn btn-primary align-self-center">+ crear usuari</a>
@@ -38,10 +38,7 @@
       <th scope="col" style="text-align: center;">Accions</th>
     </tr>
   </thead>
-  <tbody>
-    <script>
-      var coeficientT =0;      
-    </script>
+  <tbody>    
     {{#each rows}}
       <tr>
       <th scope="row">{{this.id}}</th>

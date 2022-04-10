@@ -6,37 +6,36 @@ let conn = new sqlite3.Database('server/controllers/comunitat.db', sqlite3.OPEN_
   console.log('Connected to database.');
 });
 
-// View Users
+// Vista usuaris
 exports.view = (req, res) => {
-      let alert2 = false;
-      // Calcul coeficient total
-      var coeficientTotal = calculaCoeficient();
-      console.log( coeficientTotal);
-      if(coeficientTotal>1 || coeficientTotal<1) {
-        alert2 = true;
-      } else{
-        alert2 = false;
-      } 
-  // Sqlite connection 
-  conn.all('SELECT * FROM usuari', (err, rows) => {    
-     // When done with the connection, release it
-    if (!err) {      
-      let alert = req.query.removed;         
-      res.render('home', {rows, alert, alert2, coeficientTotal});
+  let alert2 = false;
+  // Sqlite connexió 
+  conn.all('SELECT * FROM usuari', (err, rows) => {
+    // Si no hi ha error 
+    if (!err) {
+      let alert = req.query.removed;
+      calculaCoeficient(function getData(result) { 
+        alert2 = result[1];       
+        cT = result[0];         
+        res.render('home', { rows, alert, alert2, cT });
+      });
     } else {
       console.log(err);
     }
-    //console.log('fsd \n', rows);
   });
 }
 
-// Find User by Search
+// Buscar usuari
 exports.find = (req, res) => {
   let searchTerm = req.body.search;
-  // User the connection
+  // Select Sqlite
   conn.all('SELECT * FROM usuari WHERE nom LIKE ? OR cognoms LIKE ?', ['%' + searchTerm + '%', '%' + searchTerm + '%'], (err, rows) => {
     if (!err) {
-      res.render('home', { rows });
+      calculaCoeficient(function getData(result) { 
+        alert2 = result[1];       
+        cT = result[0];         
+        res.render('home', { rows, alert2});
+      });      
     } else {
       console.log(err);
     }
@@ -44,42 +43,56 @@ exports.find = (req, res) => {
   });
 }
 
+// Carregar la pagina afegir usuari
 exports.form = (req, res) => {
-  res.render('add-user');
+  calculaCoeficient(function getData(result) { 
+    alert2 = result[1];       
+    cT = result[0];         
+    res.render('add-user', {alert2});
+  }); 
 }
 
-// Add new user
+// Afegir usuari
 exports.create = (req, res) => {
-  const { nom, cognoms, email, telefon, coeficient, estat, comentaris} = req.body;
+  const { nom, cognoms, email, telefon, coeficient, estat, comentaris } = req.body;
   let searchTerm = req.body.search;
-  if(coeficient>1 || coeficient<0 || coeficient ==''){
+  if (coeficient > 1 || coeficient < 0 || coeficient == '') {
     //res.render('add-user', { alert2: 'Error. Indica un coeficient entre 0 i 1' });
-  }else{
-  // User the connection
-    const data = new Date();  
-    const year = data.getFullYear() * 100000000; 
+  } else {
+    // Insert Sqlite
+    const data = new Date();
+    const year = data.getFullYear() * 100000000;
     const month = (data.getMonth() + 1) * 1000000;
-    const day = data.getDate() * 10000; 
+    const day = data.getDate() * 10000;
     const hour = data.getHours() * 100;
     const min = data.getMinutes();
     const data2 = year + month + day + hour + min + ''
-    conn.all('INSERT INTO usuari(nom, cognoms, email, telefon, coeficient, estat, comentaris, dataAlta, dataActualitzacio) VALUES (?,?,?,?,?,?,?,?,?)', [nom, cognoms, email, telefon, coeficient, estat, comentaris, data2, data2], (err, rows) => {  
-    if (!err) {
-      res.render('add-user', { alert: 'Usuari afegit correctament.' });
-    } else {
-      console.log(err);
-    }
-    console.log('Editant l`usuari');
-  });
+    conn.all('INSERT INTO usuari(nom, cognoms, email, telefon, coeficient, estat, comentaris, dataAlta, dataActualitzacio) VALUES (?,?,?,?,?,?,?,?,?)', [nom, cognoms, email, telefon, coeficient, estat, comentaris, data2, data2], (err, rows) => {
+      if (!err) {
+        calculaCoeficient(function getData(result) { 
+          alert2 = result[1];       
+          cT = result[0];         
+          res.render('add-user', {alert2, alert3: 'Usuari afegit correctament.' });
+        }); 
+        
+      } else {
+        console.log(err);
+      }
+      console.log('Editant l`usuari');
+    });
+  }
 }
-}
-  
-// Edit user
+
+// Editar usuari
 exports.edit = (req, res) => {
-  // User the connection
+  // Select Sqlite
   conn.all('SELECT * FROM usuari WHERE id = ?', [req.params.id], (err, rows) => {
     if (!err) {
-      res.render('edit-user', { rows });
+      calculaCoeficient(function getData(result) { 
+        alert2 = result[1];       
+        cT = result[0];         
+        res.render('edit-user', { rows, alert2});
+      });      
     } else {
       console.log(err);
     }
@@ -87,30 +100,26 @@ exports.edit = (req, res) => {
   });
 }
 
-// Update User
+// Actualitzar usuari
 exports.update = (req, res) => {
   const { nom, cognoms, email, telefon, coeficient, estat, comentaris } = req.body;
-  const data = new Date();  
-    const year = data.getFullYear() * 100000000; 
-    const month = (data.getMonth() + 1) * 1000000;
-    const day = data.getDate() * 10000; 
-    const hour = data.getHours() * 100;
-    const min = data.getMinutes();
-    const data2 = year + month + day + hour + min + ''
-  // User the connection
+  const data = new Date();
+  const year = data.getFullYear() * 100000000;
+  const month = (data.getMonth() + 1) * 1000000;
+  const day = data.getDate() * 10000;
+  const hour = data.getHours() * 100;
+  const min = data.getMinutes();
+  const data2 = year + month + day + hour + min + ''
+  // Update Sqlite
   conn.all('UPDATE usuari SET nom = ?, cognoms = ?, email = ?, telefon = ?, coeficient = ?, estat = ?, comentaris = ?, dataActualitzacio = ? WHERE id = ?', [nom, cognoms, email, telefon, coeficient, estat, comentaris, data2, req.params.id], (err, rows) => {
-
+    // Si no hi ha error        
     if (!err) {
-      // User the connection
-      conn.all('SELECT * FROM usuari WHERE id = ?', [req.params.id], (err, rows) => {
-        // When done with the connection, release it        
-        if (!err) {
-          res.render('edit-user', { rows, alert: `Les dades de ${nom} s'han actualitzat.` });
-        } else {
-          console.log(err);
-        }
-        console.log('Actualitzant usuari');
-      });
+      calculaCoeficient(function getData(result) { 
+        alert2 = result[1];       
+        cT = result[0];         
+        res.render('edit-user', { rows, alert3: 'Usuari actualitzat correctament.', alert2});
+      });   
+      // location.href = "/";
     } else {
       console.log(err);
     }
@@ -140,7 +149,12 @@ exports.delete = (req, res) => {
   conn.all('UPDATE usuari SET estat = ? WHERE id = ?', ['Baixa', req.params.id], (err, rows) => {
     if (!err) {
       let removedUser = encodeURIComponent('Usuari donat de baixa.');
-      res.redirect('/?removed=' + removedUser);
+      calculaCoeficient(function getData(result) { 
+        alert2 = result[1];       
+        cT = result[0];         
+        res.redirect('/?removed=' + removedUser);
+      });   
+      // res.redirect('/?removed=' + removedUser);
     } else {
       console.log(err);
     }
@@ -149,10 +163,9 @@ exports.delete = (req, res) => {
 
 }
 
-// View Users
+// Vista usuari
 exports.viewall = (req, res) => {
-
-  // User the connection
+  // Select Sqlite
   conn.all('SELECT * FROM usuari WHERE id = ?', [req.params.id], (err, rows) => {
     if (!err) {
       res.render('view-user', { rows });
@@ -163,17 +176,25 @@ exports.viewall = (req, res) => {
   });
 }
 
-function calculaCoeficient(){
-  coeficientT = 0;
-  conn.all('SELECT * FROM usuari', (err, rows, cT) =>  {          
-        
-     // Calcul coeficient total
-     rows.forEach(row => {
-       cT = cT + row.coeficient;        
-     });       
-     cT = cT.toFixed(5);
-      
-     return cT
-    });   
-    return coeficientT 
+//Funcio calcul coeficient
+function calculaCoeficient(callback) {
+  conn.all('SELECT * FROM usuari WHERE estat = "Actiu"', (err, rows) => {
+    let result=[];
+    cT = 0;
+    // Calcul coeficient total
+    rows.forEach(row => {
+      cT = cT + row.coeficient;
+    });
+    cT = cT.toFixed(5);
+    result[0]=cT;
+    console.log(cT);
+    if (cT > 1 || cT < 1) {
+      result[1]= true;
+    } else {
+      result[1]= false;
+    }         
+    console.log(result); 
+    callback(result);
+  });
+
 }
