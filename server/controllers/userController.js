@@ -90,7 +90,7 @@ exports.create = (req, res) => {
 // Editar usuari
 exports.edit = (req, res) => {
   // Select Sqlite
-  conn.all('SELECT * FROM usuari WHERE idUsuari = ?', [req.params.idUsuari], (err, rows) => {
+  conn.all('SELECT * FROM usuari WHERE id = ?', [req.params.id], (err, rows) => {
     if (!err) {
       calculaCoeficient(function getData(result) {
         alert2 = result[1];
@@ -153,10 +153,10 @@ exports.delete = (req, res) => {
   //   console.log('The data from user table: \n', rows);
   // });
   // Hide a record
-  conn.all('UPDATE usuari SET estat = ? WHERE id = ?', ['Baixa', req.params.id], (err, rows) => {
+  conn.all('UPDATE usuari SET estat = ?, idUsuari = ? WHERE id = ?', ['Baixa',0, req.params.id], (err, rows) => {
     if (!err) {
       let removedUser = encodeURIComponent('Usuari donat de baixa.');
-      res.redirect('/?alert=' + `L'usuari amd id ${req.params.id} s'ha donat de baixa`);
+      res.redirect('/?alert=' + `S'ha donat de baixa a l'usuari`);
     } else {
       console.log(err);
     }
