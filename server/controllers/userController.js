@@ -186,11 +186,26 @@ exports.viewall = (req, res) => {
   // Select Sqlite
   conn.all('SELECT * FROM usuari WHERE idUsuari = ?', [req.params.idUsuari], (err, rows) => {
     if (!err) {
-      calculaCoeficient(function getData(result) {
-        alert2 = result[1];
-        cT = result[0];
-        res.render('view-user', { rows, alert2, cT });
+      // calculaCoeficient(function getData(result) {
+      //   alert2 = result[1];
+      //   cT = result[0];
+      //   res.render('view-user', { rows, alert2, cT });
+      // });
+      conn.all('SELECT * FROM coeficient WHERE idUsuari = ?', [req.params.idUsuari], (err, rows2) => {
+        if (!err) {
+          calculaCoeficient(function getData(result) {
+            alert2 = result[1];
+            cT = result[0];
+            res.render('view-user', { rows, rows2, alert2, cT });
+          });
+        } else {
+          console.log(err);
+        }
+        console.log('Dades de l`usuari');
       });
+
+
+
     } else {
       console.log(err);
     }
@@ -217,5 +232,15 @@ function calculaCoeficient(callback) {
     }    
     callback(result);
   });
-
 }
+
+//Funcio calcul coeficient
+function assignarIdUsuari(callback) {
+  conn.all('SELECT idUsuari + 1 FROM usuari WHERE NOT EXISTS (SELECT 1 FROM usuari t2 WHERE t2.idUsuari = usuari.idUsuari + 1);', (err, rows) => {
+    result = rows[0]["idUsuari + 1"];
+    console.log(result);   
+    callback(result);
+  });
+}
+
+// assignarIdUsuari();

@@ -66,16 +66,16 @@
 
   <table class="table table-bordered" style="font-size:medium;">
   <thead class="thead-dark">
-    <tr>
-      <th scope="col">Data modificació</th>
-      <th scope="col">Coeficient</th>      
+    <tr>      
+      <th scope="col">Coeficient</th> 
+      <th scope="col">Data modificació</th>     
     </tr>
   </thead>
   <tbody>    
-    {{#each rows}}
+    {{#each rows2}}
       <tr>
-      <td scope="row">{{this.data}}</th>      
-      <td>{{this.coeficient}}</td>            
+      <td>{{this.coeficient}}</td>    
+       <td scope="row">{{this.data}}</th>          
     </tr>
     {{/each}}
 
