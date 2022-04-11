@@ -108,12 +108,19 @@ exports.edit = (req, res) => {
 exports.update = (req, res) => {
   var { nom, cognoms, email, telefon, coeficient, estat, comentaris } = req.body;
   data = calcularData();
+  // idUsuari = req.params.idUsuari;
   coeficient = coeficient.replace(",", ".");
+  if(idUsuari =='--' || idUsuari ==null){
+  assignarIdUsuari(function getData(result2) {
+    idUsuari = result2;
+  });
+  }
+  console.log(req.params.id);
   // Update Sqlite
-  conn.all('UPDATE usuari SET nom = ?, cognoms = ?, email = ?, telefon = ?, coeficient = ?, estat = ?, comentaris = ?, dataActualitzacio = ? WHERE id = ?', [nom, cognoms, email, telefon, coeficient, estat, comentaris, data2, req.params.id], (err, rows) => {
+  conn.all('UPDATE usuari SET idUsuari = ?, nom = ?, cognoms = ?, email = ?, telefon = ?, coeficient = ?, estat = ?, comentaris = ?, dataActualitzacio = ? WHERE id = ?', [req.params.idUsuari, nom, cognoms, email, telefon, coeficient, estat, comentaris, data, req.params.id], (err, rows) => {
     // Si no hi ha error        
     if (!err) {
-      conn.all('INSERT INTO coeficient(id, coeficient, data) VALUES (?,?,?)', [1, coeficient, data], (err, rows) => {
+      conn.all('INSERT INTO coeficient(idUsuari, coeficient, data) VALUES (?,?,?)', [req.params.idUsuari, coeficient, data], (err, rows) => {
         if (!err) {
           calculaCoeficient(function getData(result) {
             conn.all('SELECT * FROM usuari WHERE id = ?', [req.params.id], (err, rows) => {
@@ -153,7 +160,7 @@ exports.delete = (req, res) => {
   //   console.log('The data from user table: \n', rows);
   // });
   // Hide a record
-  conn.all('UPDATE usuari SET estat = ?, idUsuari = ? WHERE id = ?', ['Baixa',0, req.params.id], (err, rows) => {
+  conn.all('UPDATE usuari SET estat = ?, idUsuari = ? WHERE id = ?', ['Baixa', '--', req.params.id], (err, rows) => {
     if (!err) {
       let removedUser = encodeURIComponent('Usuari donat de baixa.');
       res.redirect('/?alert=' + `S'ha donat de baixa a l'usuari`);
@@ -214,6 +221,9 @@ function assignarIdUsuari(callback2) {
   conn.all('SELECT idUsuari + 1 FROM usuari WHERE NOT EXISTS (SELECT 1 FROM usuari t2 WHERE t2.idUsuari = usuari.idUsuari + 1);', (err, rows) => {
     let result2;
     result2 = rows[0]["idUsuari + 1"];
+    if (result2 == null || result2 == '') {
+      result2 = 999;
+    }
     // console.log(result2);   
     callback2(result2);
   });

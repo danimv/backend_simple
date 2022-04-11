@@ -4,7 +4,7 @@ const exphbs = require('express-handlebars');
 require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 5004;
+const port = process.env.PORT || 5005;
 
 // Parsing middleware
 // Parse application/x-www-form-urlencoded
