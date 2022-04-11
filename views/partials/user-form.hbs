@@ -33,12 +33,17 @@
   </div>
 </div>
 <div class="col-6">
-  <div class="form-floating mb-3">
+  <div class="form-floating mb-3">    
     <select class="form-control" id="select1" value="{{this.estat}}" placeholder="Estat" name="estat">
+     <option value="{{this.estat}}" hidden="hidden" selected="selected">{{this.estat}}</option>
       <option value="Actiu">Actiu</option>
       <option value="Baixa">Baixa</option>
     </select>
     <label for="floatingInput">Estat</label>
+    <script>
+      //console.log("holaaaaaaaaaaa");
+      //document.getElementById('select1').value = `$this.estat`;
+      </script>
   </div>
 </div>
 <div class="col-12">
