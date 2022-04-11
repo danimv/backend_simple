@@ -38,17 +38,17 @@
   <tbody>    
     {{#each rows}}
       <tr>
-      <td scope="row">{{this.idUsuari}}</th>      
+      <td scope="row">{{this.idComunitat}}</th>      
       <td>{{this.nom}}</td>
       <td>{{this.cognoms}}</td>
       <td>{{this.email}}</td>
       <td style="text-align: center;"><b>{{this.coeficient}}</b></td>
       <td>{{this.estat}}</td>      
       <td style="width: 28%;" class="text-end">
-        <a style="font-size:100%"; href="/viewuser/{{this.id}}" type="button" class="btn btn-light btn"><i style="font-size: 115%;" class="bi bi-eye 2xs"></i> Info</a>
-        <a style="font-size:100%"; href="/edituser/{{this.id}}" type="button" class="btn btn-light btn"><i style="font-size: 115%;"  class="bi bi-pencil"></i>
+        <a style="font-size:100%"; href="/viewuser/{{this.idUsuari}}" type="button" class="btn btn-light btn"><i style="font-size: 115%;" class="bi bi-eye 2xs"></i> Info</a>
+        <a style="font-size:100%"; href="/edituser/{{this.idUsuari}}" type="button" class="btn btn-light btn"><i style="font-size: 115%;"  class="bi bi-pencil"></i>
           Edita</a>
-        <a style="font-size:100%"; href="/{{this.id}}" type="button" class="btn btn-light btn"><i style="font-size: 115%;"  class="bi bi-person-x"></i> Elimina</a>
+        <a style="font-size:100%"; href="/{{this.idUsuari}}" type="button" class="btn btn-light btn"><i style="font-size: 115%;"  class="bi bi-person-x"></i> Elimina</a>
       </td>
     </tr>
     {{/each}}

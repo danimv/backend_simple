@@ -10,7 +10,7 @@ let conn = new sqlite3.Database('server/controllers/comunitat.db', sqlite3.OPEN_
 exports.view = (req, res) => {
   let alert2 = false;
   // Sqlite connexió 
-  conn.all('SELECT * FROM usuari ORDER BY idUsuari ASC', (err, rows) => {
+  conn.all('SELECT * FROM usuari ORDER BY idComunitat ASC', (err, rows) => {
     // Si no hi ha error 
     if (!err) {
       let alert = req.query.alert;
@@ -67,19 +67,21 @@ exports.create = (req, res) => {
   assignarIdUsuari(function getId(result2) {
     processSqlite(result2);
   });
-  function processSqlite(idUsuari) {
-    conn.all('INSERT INTO usuari(idUsuari, nom, cognoms, email, telefon, coeficient, estat, comentaris, dataAlta, dataActualitzacio) VALUES (?,?,?,?,?,?,?,?,?,?)', [idUsuari, nom, cognoms, email, telefon, coeficient, estat, comentaris, data, data], (err, rows) => {
+  function processSqlite(idComunitat) {
+    conn.all('INSERT INTO usuari(idComunitat, nom, cognoms, email, telefon, coeficient, estat, comentaris, dataAlta, dataActualitzacio) VALUES (?,?,?,?,?,?,?,?,?,?)', [idComunitat, nom, cognoms, email, telefon, coeficient, estat, comentaris, data, data], (err, rows) => {
       if (!err) {
-        conn.all('INSERT INTO coeficient(idUsuari, coeficient, data) VALUES (?,?,?)', [idUsuari, coeficient, data], (err, rows) => {
-          if (!err) {
-            calculaCoeficient(function getCoeficient(result) {
-              alert2 = result[1];
-              cT = result[0];
-              res.redirect('/?alert3=' + `S'ha creat correctament un usuari nou: ${nom} ${cognoms}`);
-            });
-          } else {
-            console.log(err);
-          }
+        conn.all('SELECT idUsuari FROM usuari WHERE idComunitat = ?', [idComunitat], (err, rows) => {
+          conn.all('INSERT INTO coeficient(idUsuari, coeficient, data) VALUES (?,?,?)', [rows[0].idUsuari, coeficient, data], (err, rows) => {
+            if (!err) {
+              calculaCoeficient(function getCoeficient(result) {
+                alert2 = result[1];
+                cT = result[0];
+                res.redirect('/?alert3=' + `S'ha creat correctament un usuari nou: ${nom} ${cognoms}`);
+              });
+            } else {
+              console.log(err);
+            }
+          });
         });
       } else {
         console.log(err);
@@ -92,7 +94,7 @@ exports.create = (req, res) => {
 // Editar usuari
 exports.edit = (req, res) => {
   // Select Sqlite
-  conn.all('SELECT * FROM usuari WHERE id = ?', [req.params.id], (err, rows) => {
+  conn.all('SELECT * FROM usuari WHERE idUsuari = ?', [req.params.idUsuari], (err, rows) => {
     if (!err) {
       calculaCoeficient(function getCoeficient(result) {
         alert2 = result[1];
@@ -110,28 +112,28 @@ exports.edit = (req, res) => {
 exports.update = (req, res) => {
   var { nom, cognoms, email, telefon, coeficient, estat, comentaris } = req.body;
   data = calcularData();
-  idUsuari = req.params.idUsuari;
+  idComunitat = req.params.idComunitat;
   coeficient = coeficient.replace(",", ".");
-  if ((idUsuari == '--' || idUsuari == null) & estat == 'Actiu') {
+  if ((idComunitat == '--' || idComunitat == null) & estat == 'Actiu') {
     assignarIdUsuari(function getId(result2) {
       console.log(result2);
       processSqlite(result2);
     });
   } else {
-    processSqlite(idUsuari)
+    processSqlite(idComunitat)
   }
   // console.log(idUsuari);
   // Update Sqlite
-  function processSqlite(idUsuari) {
-    conn.all('SELECT coeficient FROM usuari WHERE id = ?', [req.params.id], (err, rows) => {
+  function processSqlite(idComunitat) {
+    conn.all('SELECT coeficient FROM usuari WHERE idUsuari = ?', [req.params.idUsuari], (err, rows) => {
       if (!err) {
-        console.log(req.params.id);
+        console.log(req.params.idUsuari);
         console.log(rows[0].coeficient);
         console.log(coeficient);
         if (rows[0].coeficient != coeficient) {
           actualitzarHistoricCoeficients();
         }
-        conn.all('UPDATE usuari SET idUsuari = ?, nom = ?, cognoms = ?, email = ?, telefon = ?, coeficient = ?, estat = ?, comentaris = ?, dataActualitzacio = ? WHERE id = ?', [idUsuari, nom, cognoms, email, telefon, coeficient, estat, comentaris, data, req.params.id], (err, rows) => {
+        conn.all('UPDATE usuari SET idComunitat = ?, nom = ?, cognoms = ?, email = ?, telefon = ?, coeficient = ?, estat = ?, comentaris = ?, dataActualitzacio = ? WHERE idUsuari = ?', [idComunitat, nom, cognoms, email, telefon, coeficient, estat, comentaris, data, req.params.idUsuari], (err, rows) => {
           // Si no hi ha error        
           if (!err) {
             calculaCoeficient(function getCoeficient(result) {
@@ -149,7 +151,7 @@ exports.update = (req, res) => {
       console.log('Actualitzant usuari');
     });
     function actualitzarHistoricCoeficients() {
-      conn.all('INSERT INTO coeficient(idUsuari, coeficient, data) VALUES (?,?,?)', [idUsuari, coeficient, data], (err, rows) => {
+      conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris) VALUES (?,?,?)', [req.params.idUsuari, coeficient, data, comentaris], (err, rows) => {
         if (err) {
           console.log(err);
         }
@@ -171,7 +173,7 @@ exports.delete = (req, res) => {
   //   console.log('The data from user table: \n', rows);
   // });
   // Hide a record
-  conn.all('UPDATE usuari SET estat = ?, idUsuari = ? WHERE id = ?', ['Baixa', '--', req.params.id], (err, rows) => {
+  conn.all('UPDATE usuari SET estat = ?, idUsuari = ? WHERE idUsuari = ?', ['Baixa', '--', req.params.idUsuari], (err, rows) => {
     if (!err) {
       let removedUser = encodeURIComponent('Usuari donat de baixa.');
       res.redirect('/?alert=' + `S'ha donat de baixa a l'usuari`);
@@ -186,9 +188,9 @@ exports.delete = (req, res) => {
 // Vista usuari
 exports.viewall = (req, res) => {
   // Select Sqlite
-  conn.all('SELECT * FROM usuari WHERE id = ?', [req.params.id], (err, rows) => {
+  conn.all('SELECT * FROM usuari WHERE idUsuari = ?', [req.params.idUsuari], (err, rows) => {
     if (!err) {
-      conn.all('SELECT * FROM coeficient WHERE id = ?', [req.params.id], (err, rows2) => {
+      conn.all('SELECT * FROM coeficient WHERE idUsuari = ?', [req.params.idUsuari], (err, rows2) => {
         if (!err) {
           calculaCoeficient(function getCoeficient(result) {
             alert2 = result[1];
@@ -229,9 +231,9 @@ function calculaCoeficient(callback) {
 
 //Funcio calcul coeficient
 function assignarIdUsuari(callback2) {
-  conn.all('SELECT idUsuari + 1 FROM usuari WHERE NOT EXISTS (SELECT 1 FROM usuari t2 WHERE t2.idUsuari = usuari.idUsuari + 1);', (err, rows) => {
+  conn.all('SELECT idComunitat + 1 FROM usuari WHERE NOT EXISTS (SELECT 1 FROM usuari t2 WHERE t2.idComunitat = usuari.idComunitat + 1);', (err, rows) => {
     let result2;
-    result2 = rows[0]["idUsuari + 1"];
+    result2 = rows[0]["idComunitat + 1"];
     if (result2 == null || result2 == '') {
       result2 = 999;
     }

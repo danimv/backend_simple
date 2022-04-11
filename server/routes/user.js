@@ -7,9 +7,9 @@ router.get('/', userController.view);
 router.post('/', userController.find);
 router.get('/adduser', userController.form);
 router.post('/adduser', userController.create);
-router.get('/edituser/:id', userController.edit);
-router.post('/edituser/:id/:idUsuari', userController.update);
-router.get('/viewuser/:id', userController.viewall);
-router.get('/:id',userController.delete);
+router.get('/edituser/:idUsuari', userController.edit);
+router.post('/edituser/:idUsuari/:idComunitat', userController.update);
+router.get('/viewuser/:idUsuari', userController.viewall);
+router.get('/:idUsuari',userController.delete);
   
 module.exports = router;
