@@ -64,10 +64,10 @@ exports.create = (req, res) => {
   data = calcularData();
   coeficient = coeficient.replace(",", ".");
   // Calcular id usuari i Insert Sqlite
-  assignarIdUsuari(function getId(result2) {    
+  assignarIdUsuari(function getId(result2) {
     processSqlite(result2);
   });
-  function processSqlite(idUsuari){
+  function processSqlite(idUsuari) {
     conn.all('INSERT INTO usuari(idUsuari, nom, cognoms, email, telefon, coeficient, estat, comentaris, dataAlta, dataActualitzacio) VALUES (?,?,?,?,?,?,?,?,?,?)', [idUsuari, nom, cognoms, email, telefon, coeficient, estat, comentaris, data, data], (err, rows) => {
       if (!err) {
         conn.all('INSERT INTO coeficient(idUsuari, coeficient, data) VALUES (?,?,?)', [idUsuari, coeficient, data], (err, rows) => {
@@ -86,7 +86,7 @@ exports.create = (req, res) => {
       }
       console.log('Editant l`usuari');
     });
-  }  
+  }
 }
 
 // Editar usuari
@@ -112,36 +112,32 @@ exports.update = (req, res) => {
   data = calcularData();
   idUsuari = req.params.idUsuari;
   coeficient = coeficient.replace(",", ".");
-  if ((idUsuari == '--' || idUsuari == null) & estat=='Actiu') {
+  if ((idUsuari == '--' || idUsuari == null) & estat == 'Actiu') {
     assignarIdUsuari(function getId(result2) {
       console.log(result2);
-      processSqlite(result2);      
+      processSqlite(result2);
     });
-  }else{
+  } else {
     processSqlite(idUsuari)
   }
   // console.log(idUsuari);
   // Update Sqlite
   function processSqlite(idUsuari) {
-    conn.all('UPDATE usuari SET idUsuari = ?, nom = ?, cognoms = ?, email = ?, telefon = ?, coeficient = ?, estat = ?, comentaris = ?, dataActualitzacio = ? WHERE id = ?', [idUsuari, nom, cognoms, email, telefon, coeficient, estat, comentaris, data, req.params.id], (err, rows) => {
-      // Si no hi ha error        
+    conn.all('SELECT coeficient FROM usuari WHERE id = ?', [req.params.id], (err, rows) => {
       if (!err) {
-        console.log(rows);
-        conn.all('INSERT INTO coeficient(idUsuari, coeficient, data) VALUES (?,?,?)', [idUsuari, coeficient, data], (err, rows) => {
+        console.log(req.params.id);
+        console.log(rows[0].coeficient);
+        console.log(coeficient);
+        if (rows[0].coeficient != coeficient) {
+          actualitzarHistoricCoeficients();
+        }
+        conn.all('UPDATE usuari SET idUsuari = ?, nom = ?, cognoms = ?, email = ?, telefon = ?, coeficient = ?, estat = ?, comentaris = ?, dataActualitzacio = ? WHERE id = ?', [idUsuari, nom, cognoms, email, telefon, coeficient, estat, comentaris, data, req.params.id], (err, rows) => {
+          // Si no hi ha error        
           if (!err) {
             calculaCoeficient(function getCoeficient(result) {
-              // conn.all('SELECT * FROM usuari WHERE id = ?', [req.params.id], (err, rows) => {
-              //   if (!err) {
-                  calculaCoeficient(function getData(result) {
-                    alert2 = result[1];
-                    cT = result[0];
-                    // res.render('edit-user', { rows, alert3: `L'usuari ${nom} s'ha actualitzat.`, alert2 });
-                    res.redirect('/?alert3=' + `Les dades de l'usuari ${nom} ${cognoms} s'han actualitzat correctament`);
-                  });
-              //   } else {
-              //     console.log(err);
-              //   }
-              // });
+              alert2 = result[1];
+              cT = result[0];
+              res.redirect('/?alert3=' + `Les dades de l'usuari ${nom} ${cognoms} s'han actualitzat correctament`);
             });
           } else {
             console.log(err);
@@ -152,6 +148,13 @@ exports.update = (req, res) => {
       }
       console.log('Actualitzant usuari');
     });
+    function actualitzarHistoricCoeficients() {
+      conn.all('INSERT INTO coeficient(idUsuari, coeficient, data) VALUES (?,?,?)', [idUsuari, coeficient, data], (err, rows) => {
+        if (err) {
+          console.log(err);
+        }
+      });
+    }
   }
 }
 
