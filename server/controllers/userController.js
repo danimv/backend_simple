@@ -151,7 +151,7 @@ exports.update = (req, res) => {
       console.log('Actualitzant usuari');
     });
     function actualitzarHistoricCoeficients() {
-      conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris) VALUES (?,?,?)', [req.params.idUsuari, coeficient, data, comentaris], (err, rows) => {
+      conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris) VALUES (?,?,?,?)', [req.params.idUsuari, coeficient, data, comentaris], (err, rows) => {
         if (err) {
           console.log(err);
         }
@@ -173,7 +173,7 @@ exports.delete = (req, res) => {
   //   console.log('The data from user table: \n', rows);
   // });
   // Hide a record
-  conn.all('UPDATE usuari SET estat = ?, idUsuari = ? WHERE idUsuari = ?', ['Baixa', '--', req.params.idUsuari], (err, rows) => {
+  conn.all('UPDATE usuari SET estat = ?, idComunitat = ? WHERE idUsuari = ?', ['Baixa', '--', req.params.idUsuari], (err, rows) => {
     if (!err) {
       let removedUser = encodeURIComponent('Usuari donat de baixa.');
       res.redirect('/?alert=' + `S'ha donat de baixa a l'usuari`);
