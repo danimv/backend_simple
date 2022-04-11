@@ -1,8 +1,8 @@
 const express = require('express');
-const router = express.Router();
+const router2 = express.Router();
 const comunitatController = require('../controllers/comunitatController');
 
 // Routes
-router.get('/comunitat/', comunitatController.view);
-  
-module.exports = router;
+router2.get('/inici', comunitatController.view2);
+// router2.post('/comunitat', comunitatController.view2);  
+module.exports = router2;

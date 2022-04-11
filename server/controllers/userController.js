@@ -129,18 +129,26 @@ exports.update = (req, res) => {
   conn.all('UPDATE usuari SET nom = ?, cognoms = ?, email = ?, telefon = ?, coeficient = ?, estat = ?, comentaris = ?, dataActualitzacio = ? WHERE idUsuari = ?', [nom, cognoms, email, telefon, coeficient, estat, comentaris, data2, req.params.idUsuari], (err, rows) => {
     // Si no hi ha error        
     if (!err) {
-      conn.all('SELECT * FROM usuari WHERE idUsuari = ?', [req.params.idUsuari], (err, rows) => {
+      conn.all('INSERT INTO coeficient(idUsuari, coeficient, data) VALUES (?,?,?)', [1, coeficient, data2], (err, rows) => {
         if (!err) {
           calculaCoeficient(function getData(result) {
-            alert2 = result[1];
-            cT = result[0];
-            // res.render('edit-user', { rows, alert3: `L'usuari ${nom} s'ha actualitzat.`, alert2 });
-            res.redirect('/?alert3=' + `Les dades de l'usuari ${nom} ${cognoms} s'han actualitzat correctament`);
+            conn.all('SELECT * FROM usuari WHERE idUsuari = ?', [req.params.idUsuari], (err, rows) => {
+              if (!err) {
+                calculaCoeficient(function getData(result) {
+                  alert2 = result[1];
+                  cT = result[0];
+                  // res.render('edit-user', { rows, alert3: `L'usuari ${nom} s'ha actualitzat.`, alert2 });
+                  res.redirect('/?alert3=' + `Les dades de l'usuari ${nom} ${cognoms} s'han actualitzat correctament`);
+                });
+              } else {
+                console.log(err);
+              }
+            });
           });
         } else {
           console.log(err);
         }
-      });
+      });      
     } else {
       console.log(err);
     }

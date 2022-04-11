@@ -7,7 +7,7 @@ let conn = new sqlite3.Database('server/controllers/comunitat.db', sqlite3.OPEN_
 });
 
 // Vista comunitat
-exports.view = (req, res) => {
+exports.view2 = (req, res) => {
   let alert2 = false;
-  
+  res.render('comunitat');  
 }

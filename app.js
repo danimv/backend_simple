@@ -24,8 +24,8 @@ app.engine('.hbs', handlebars.engine);
 app.set('view engine', '.hbs');
 
 const routes = require('./server/routes/user');
-app.use('/', routes);
 const routes2 = require('./server/routes/comunitat');
-app.use('/comunitat/', routes2);
+app.use('/', routes);
+app.use('/comunitat', routes2);
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

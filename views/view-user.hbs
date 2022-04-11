@@ -5,11 +5,11 @@
   </ol>
 </nav>
 
-<div class="view-user p-3">
+<div class="view-user p-0">
   {{#each rows}}
-  <div class="row mb-5">
+  <div class="row mb-1">
     <div class="col text-center">
-      <h3>Usuari {{this.idUsuari}} - {{this.nom}} {{this.cognoms}}</h3>
+      <h3>{{this.nom}} {{this.cognoms}} - Id {{this.idUsuari}}</h3>
     </div>
   </div>
   <div class="row">
@@ -18,36 +18,40 @@
         <thead>
           <tr>
             <th scope="col">Data alta</th>
-            <!--<th scope="col">Data actualització</th>-->
-      <th scope="col">Nom</th>
-      <th scope="col">Cognoms</th>
-      <th scope="col">Email</th>
-      <th scope="col">Telèfon</th>
-      <th scope="col">Coeficient</th>
-      <th scope="col">Estat</th>
-      <th style="text-align: center;" scope="col">Accions</th>
+            <th scope="col">Data actualització</th>
+            <th scope="col">Nom</th>
+            <th scope="col">Cognoms</th>
+            <th scope="col">Email</th>
+            <th scope="col">Telèfon</th>
+            <th scope="col">Coeficient</th>
+            <th scope="col">Estat</th>
+            <th scope="col">Comentaris</th>
+            <th style="text-align: center;" scope="col">Accions</th>
           </tr>
         </thead>
         <tbody>
-          <tr>            
-            <th scope="row">{{this.dataAlta}}</th>
-            <!--<th>{{this.dataModificacio}}</th>-->
+          <tr>
+            <td scope="row">{{this.dataAlta}}</th>
+            <td>{{this.dataActualitzacio}}</th>
             <td>{{this.nom}}</td>
             <td>{{this.cognoms}}</td>
             <td>{{this.email}}</td>
             <td>{{this.telefon}}</td>
             <td>{{this.coeficient}}</td>
-            <td>{{this.estat}}</td>           
+            <td>{{this.estat}}</td>
+            <td>{{this.comentaris}}</td>
             <td class="text-end">
-        <a href="/edituser/{{this.idUsuari}}" type="button" class="btn btn-light btn-small"><i class="bi bi-pencil"></i>
-          Edita</a>
-        <a href="/{{this.idUsuari}}" type="button" class="btn btn-light btn-small"><i class="bi bi-person-x"></i> Elimina</a>
-      </td>
+              <a href="/edituser/{{this.idUsuari}}" type="button" class="btn btn-light btn-small"><i
+                  class="bi bi-pencil"></i>
+                Edita</a>
+              <a href="/{{this.idUsuari}}" type="button" class="btn btn-light btn-small"><i class="bi bi-person-x"></i>
+                Elimina</a>
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <div class="row">
+    {{!-- <div class="row">
       <div class="col">
         <b>Comentaris</b>
       </div>
@@ -56,7 +60,25 @@
       <div class="col">
         {{this.comentaris}}
       </div>
-    </div>
+    </div> --}}
   </div>
   {{/each}}
+
+  <table class="table table-bordered" style="font-size:medium;">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Data modificació</th>
+      <th scope="col">Coeficient</th>      
+    </tr>
+  </thead>
+  <tbody>    
+    {{#each rows}}
+      <tr>
+      <td scope="row">{{this.data}}</th>      
+      <td>{{this.coeficient}}</td>            
+    </tr>
+    {{/each}}
+
+  </tbody>
+</table>
 </div>
