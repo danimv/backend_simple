@@ -148,7 +148,7 @@ exports.update = (req, res) => {
       } else {
         console.log(err);
       }
-      console.log('Actualitzant usuari');
+      console.log('Actualitzant usuari'); 
     });
     function actualitzarHistoricCoeficients() {
       conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris) VALUES (?,?,?,?)', [req.params.idUsuari, coeficient, data, comentaris], (err, rows) => {
