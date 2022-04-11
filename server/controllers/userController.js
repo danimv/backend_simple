@@ -130,7 +130,7 @@ exports.update = (req, res) => {
         console.log(req.params.idUsuari);
         console.log(rows[0].coeficient);
         console.log(coeficient);
-        if (rows[0].coeficient != coeficient) {
+        if (((rows[0].coeficient != coeficient) & rows[0].estat == 'Actiu')|| (rows[0].estat =='Baixa' & estat =='Actiu')) {
           actualitzarHistoricCoeficients();
         }
         conn.all('UPDATE usuari SET idComunitat = ?, nom = ?, cognoms = ?, email = ?, telefon = ?, coeficient = ?, estat = ?, comentaris = ?, dataActualitzacio = ? WHERE idUsuari = ?', [idComunitat, nom, cognoms, email, telefon, coeficient, estat, comentaris, data, req.params.idUsuari], (err, rows) => {
