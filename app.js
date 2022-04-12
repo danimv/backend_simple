@@ -28,8 +28,14 @@ const rutesComunitat = require('./server/routes/comunitat');
 const rutesUsuari = require('./server/routes/usuaris');
 // app.use('/', rutesInici);
 
-app.use('/comunitat', rutesComunitat);
-app.use('/usuaris', rutesUsuari);
+app.use('/comunitat', rutesComunitat,function (req, res, next) {
+    req.app.locals.layout = 'main'; 
+    next(); 
+    });
+app.use('/usuaris', rutesUsuari,function (req, res, next) {
+    req.app.locals.layout = 'main'; 
+    next(); 
+    });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
@@ -65,7 +71,7 @@ app.post('/auth', function (request, response) {
                 request.session.loggedin = true;
                 request.session.username = username;
                 request.session.admin = true;
-                response.redirect('/usuaris');
+                response.redirect('/comunitat');
                 // response.render('main');
             } else {
                 response.redirect('/');
@@ -80,7 +86,10 @@ app.post('/auth', function (request, response) {
 });
 
 //Logout
-app.get('/logout', function (req, res) {
+app.get('/logout',function (req, res, next) {
+    req.app.locals.layout = 'main_initial'; 
+    next(); 
+    } ,function (req, res) {
     req.session.destroy();
     res.redirect('/');
 });

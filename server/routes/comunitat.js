@@ -3,6 +3,9 @@ const rutesComunitat = express.Router();
 const comunitatController = require('../controllers/comunitatController');
 
 // Routes
-rutesComunitat.get('/', comunitatController.view2);
+rutesComunitat.get('/', function (req, res, next) {
+    req.app.locals.layout = 'main'; 
+    next(); 
+    }, comunitatController.view2);
 // router2.post('/comunitat', comunitatController.view2);  
 module.exports = rutesComunitat;
