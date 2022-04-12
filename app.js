@@ -23,9 +23,11 @@ const handlebars = exphbs.create({ extname: '.hbs', });
 app.engine('.hbs', handlebars.engine);
 app.set('view engine', '.hbs');
 
-const routes = require('./server/routes/user');
-const routes2 = require('./server/routes/comunitat');
-app.use('/', routes);
-app.use('/comunitat', routes2);
+const rutesInici = require('./server/routes/inici');
+const rutesComunitat = require('./server/routes/comunitat');
+const rutesUsuari = require('./server/routes/usuaris');
+app.use('/', rutesInici);
+app.use('/comunitat', rutesComunitat);
+app.use('/usuari', rutesUsuari);
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
