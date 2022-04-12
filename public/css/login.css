@@ -3,9 +3,9 @@
     font-family: -apple-system, BlinkMacSystemFont, "segoe ui", roboto, oxygen, ubuntu, cantarell, "fira sans", "droid sans", "helvetica neue", Arial, sans-serif;
     font-size: 16px;
 }
-body {
+/* body {
     background-color: #435165;
-}
+} */
 .login {
     width: 400px;
     background-color: #ffffff;

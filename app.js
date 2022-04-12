@@ -1,8 +1,6 @@
 var express = require('express');
 const exphbs = require('express-handlebars');
-
 require('dotenv').config();
-
 var app = express();
 const port = process.env.PORT || 5010;
 
@@ -16,7 +14,6 @@ app.use(express.json()); // New
 
 // Static Files
 app.use(express.static(__dirname + '/public'));
-// app.use('/static', express.static(__dirname + '/public'));
 
 // Templating Engine
 const handlebars = exphbs.create({ extname: '.hbs', });
