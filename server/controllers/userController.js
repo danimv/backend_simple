@@ -18,7 +18,7 @@ exports.view = (req, res) => {
       calculaCoeficient(function getCoeficient(result) {
         alert2 = result[1];
         cT = result[0];
-        res.render('home', { rows, alert, alert2, alert3, cT });
+        res.render('usuaris', { rows, alert, alert2, alert3, cT });
       });
     } else {
       console.log(err);
@@ -40,7 +40,7 @@ exports.find = (req, res) => {
         } else {
           msg = 'Es mostren els resultats de la búsqueda: ';
         }
-        res.render('home', { rows, alert2, alert3: `${msg}` + `${searchTerm}` });
+        res.render('usuaris', { rows, alert2, alert3: `${msg}` + `${searchTerm}` });
       });
     } else {
       console.log(err);
@@ -178,8 +178,7 @@ exports.delete = (req, res) => {
   conn.all('UPDATE usuari SET estat = ?, idComunitat = ? WHERE idUsuari = ?', ['Baixa', '--', req.params.idUsuari], (err, rows) => {
     if (!err) {
       let removedUser = encodeURIComponent('Usuari donat de baixa.');
-      // res.redirect('/usuaris/?alert=' + `S'ha donat de baixa a l'usuari`);
-      res.redirect('/usuaris/?alert=' + true);
+      res.redirect('/usuaris/?alert=' + `S'ha donat de baixa a l'usuari`);    
     } else {
       console.log(err);
     }
