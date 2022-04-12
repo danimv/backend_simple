@@ -178,7 +178,8 @@ exports.delete = (req, res) => {
   conn.all('UPDATE usuari SET estat = ?, idComunitat = ? WHERE idUsuari = ?', ['Baixa', '--', req.params.idUsuari], (err, rows) => {
     if (!err) {
       let removedUser = encodeURIComponent('Usuari donat de baixa.');
-      res.redirect('/usuaris/?alert=' + `S'ha donat de baixa a l'usuari`);
+      // res.redirect('/usuaris/?alert=' + `S'ha donat de baixa a l'usuari`);
+      res.redirect('/usuaris/?alert=' + true);
     } else {
       console.log(err);
     }
