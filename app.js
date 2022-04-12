@@ -1,13 +1,12 @@
-const express = require('express');
+var express = require('express');
 const exphbs = require('express-handlebars');
 
 require('dotenv').config();
 
-const app = express();
+var app = express();
 const port = process.env.PORT || 5010;
 
 // Parsing middleware
-// Parse application/x-www-form-urlencoded
 // app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.urlencoded({ extended: true })); // New
 
@@ -16,7 +15,8 @@ app.use(express.urlencoded({ extended: true })); // New
 app.use(express.json()); // New
 
 // Static Files
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
+// app.use('/static', express.static(__dirname + '/public'));
 
 // Templating Engine
 const handlebars = exphbs.create({ extname: '.hbs', });
@@ -28,7 +28,7 @@ const rutesComunitat = require('./server/routes/comunitat');
 const rutesUsuari = require('./server/routes/usuaris');
 app.use('/', rutesInici);
 app.use('/comunitat', rutesComunitat);
-app.use('/usuari', rutesUsuari);
+app.use('/usuaris', rutesUsuari);
 // app.use(express.static('imatges'));
 
 
