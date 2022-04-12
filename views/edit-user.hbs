@@ -6,7 +6,7 @@
 </nav>
 
 {{#each rows}}
-<form id="dadesUsuari" name="dadesUsuari" class="row g-1 needs-validation" method="POST" onsubmit="return validate()" action="/edituser/{{this.idUsuari}}/{{this.idComunitat}}" novalidate> 
+<form id="dadesUsuari" name="dadesUsuari" class="row g-1 needs-validation" method="POST" onsubmit="return validate()" action="/usuaris/edituser/{{this.idUsuari}}/{{this.idComunitat}}" novalidate> 
   {{> user-form}}
 </form>
 {{/each}}

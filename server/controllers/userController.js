@@ -76,7 +76,7 @@ exports.create = (req, res) => {
               calculaCoeficient(function getCoeficient(result) {
                 alert2 = result[1];
                 cT = result[0];
-                res.redirect('/?alert3=' + `S'ha creat correctament un usuari nou: ${nom} ${cognoms}`);
+                res.redirect('/usuaris/?alert3=' + `S'ha creat correctament un usuari nou: ${nom} ${cognoms}`);
               });
             } else {
               console.log(err);
@@ -141,7 +141,7 @@ exports.update = (req, res) => {
             calculaCoeficient(function getCoeficient(result) {
               alert2 = result[1];
               cT = result[0];
-              res.redirect('/?alert3=' + `Les dades de l'usuari ${nom} ${cognoms} s'han actualitzat correctament`);
+              res.redirect('/usuaris/?alert3=' + `Les dades de l'usuari ${nom} ${cognoms} s'han actualitzat correctament`);
             });
           } else {
             console.log(err);
@@ -178,7 +178,7 @@ exports.delete = (req, res) => {
   conn.all('UPDATE usuari SET estat = ?, idComunitat = ? WHERE idUsuari = ?', ['Baixa', '--', req.params.idUsuari], (err, rows) => {
     if (!err) {
       let removedUser = encodeURIComponent('Usuari donat de baixa.');
-      res.redirect('/?alert=' + `S'ha donat de baixa a l'usuari`);
+      res.redirect('/usuaris/?alert=' + `S'ha donat de baixa a l'usuari`);
     } else {
       console.log(err);
     }
