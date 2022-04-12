@@ -5,7 +5,7 @@ const session = require('express-session');
 require('dotenv').config();
 let alert = require('alert');
 const app = express();
-const port = process.env.PORT || 5010;
+const port = process.env.PORT || 5011;
 
 // Parsing middleware
 // app.use(bodyParser.urlencoded({ extended: false }));
