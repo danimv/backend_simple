@@ -1,6 +1,6 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item"><a href="/usuaris">Usuaris</a></li>
     <li class="breadcrumb-item active" aria-current="page">Info usuari</li>
   </ol>
 </nav>
@@ -41,10 +41,10 @@
             <td>{{this.estat}}</td>
             <td>{{this.comentaris}}</td>
             <td style="width: 18%" ; class="text-end">
-              <a href="/edituser/{{this.idUsuari}}" type="button" class="btn btn-light btn-small"><i
+              <a href="/usuaris/edituser/{{this.idUsuari}}" type="button" class="btn btn-light btn-small"><i
                   class="bi bi-pencil"></i>
                 Edita</a>
-              <a href="/{{this.idUsuari}}" type="button" class="btn btn-light btn-small"><i class="bi bi-person-x"></i>
+              <a type="button" class="btn btn-light btn-small"><i class="bi bi-person-x"></i>
                 Elimina</a>
             </td>
           </tr>

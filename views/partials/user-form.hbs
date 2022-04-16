@@ -58,6 +58,7 @@
     var cognoms = document.forms["dadesUsuari"]["cognoms"];
     var email = document.forms["dadesUsuari"]["email"];
     var coeficient = document.forms["dadesUsuari"]["coeficient"];
+    var estat = document.forms["dadesUsuari"]["estat"];
     //document.forms["dadesUsuari"]["coeficient"].value = document.forms["dadesUsuari"]["coeficient"].replace(',', '.'));
     
     if (name.value == "") {
@@ -73,6 +74,11 @@
     if (email.value == "") {
       alert("Introdueix el correu electrònic");
       email.focus();
+      return false;
+    }
+    if (estat.value == "") {
+      alert("Indica l'estat de l'usuari, Actiu o Baixa");
+      estat.focus();
       return false;
     }
     if (coeficient.value > 1 || coeficient.value < 0 || coeficient.value == "") {
