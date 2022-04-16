@@ -1,5 +1,11 @@
 let sqlite3 = require('sqlite3').verbose();
-let conn = new sqlite3.Database('server/controllers/comunitat.db', sqlite3.OPEN_READWRITE, (err) => {
+const fs = require('fs');
+const location = process.env.SQLITE_DB_LOCATION || 'home/root/db_app/comunitat.db';
+const dirName = require('path').dirname(location);
+    if (!fs.existsSync(dirName)) {
+        fs.mkdirSync(dirName, { recursive: true });
+    }
+let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
   if (err) {
     console.error(err.message);
   }
