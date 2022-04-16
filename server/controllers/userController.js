@@ -2,9 +2,9 @@ let sqlite3 = require('sqlite3').verbose();
 const fs = require('fs');
 const location = process.env.SQLITE_DB_LOCATION || 'home/root/db_app/comunitat.db';
 const dirName = require('path').dirname(location);
-    if (!fs.existsSync(dirName)) {
-        fs.mkdirSync(dirName, { recursive: true });
-    }
+if (!fs.existsSync(dirName)) {
+  fs.mkdirSync(dirName, { recursive: true });
+}
 let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
   if (err) {
     console.error(err.message);
@@ -12,9 +12,17 @@ let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
   console.log('Connected to database.');
 });
 
+
 // Vista usuaris
 exports.view = (req, res) => {
   let alert2 = false;
+  conn.all(
+    'CREATE TABLE IF NOT EXISTS usuari (idUsuari INT, idComunitat INT, dataAlta TEXT, dataActualitzacio TEXT, nom TEXT, cognoms TEXT, email TEXT, telefon INT, coeficient INT, estat TEXT, comentaris TXT)',
+    (err, result) => {
+      if (err) return rej(err);
+      acc();
+    },
+  );
   // Sqlite connexió 
   conn.all('SELECT * FROM usuari ORDER BY idComunitat ASC', (err, rows) => {
     // Si no hi ha error 
@@ -120,11 +128,11 @@ exports.update = (req, res) => {
   data = calcularData();
   idComunitat = req.params.idComunitat;
   coeficient = coeficient.replace(",", ".");
-  if(estat =='Baixa'){
+  if (estat == 'Baixa') {
     idComunitat = '--';
   }
   if ((idComunitat == '--' || idComunitat == null) & estat == 'Actiu') {
-    assignarIdUsuari(function getId(result2) {      
+    assignarIdUsuari(function getId(result2) {
       processSqlite(result2);
     });
   } else {
@@ -184,7 +192,7 @@ exports.delete = (req, res) => {
   conn.all('UPDATE usuari SET estat = ?, idComunitat = ? WHERE idUsuari = ?', ['Baixa', '--', req.params.idUsuari], (err, rows) => {
     if (!err) {
       let removedUser = encodeURIComponent('Usuari donat de baixa.');
-      res.redirect('/usuaris/?alert=' + `S'ha donat de baixa a l'usuari`);    
+      res.redirect('/usuaris/?alert=' + `S'ha donat de baixa a l'usuari`);
     } else {
       console.log(err);
     }
