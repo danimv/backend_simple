@@ -4,8 +4,18 @@ const comunitatController = require('../controllers/comunitatController');
 
 // Routes
 rutesComunitat.get('/', function (req, res, next) {
-    req.app.locals.layout = 'main'; 
-    next(); 
-    }, comunitatController.view2);
-// router2.post('/comunitat', comunitatController.view2);  
+    req.app.locals.layout = 'main';
+    next();
+}, comunitatController.view);
+
+rutesComunitat.get('/config', function (req, res, next) {
+    req.app.locals.layout = 'main';
+    next();
+}, comunitatController.view2);
+
+rutesComunitat.get('/crear_bd', function (req, res, next) {
+    req.app.locals.layout = 'main';
+    next();
+}, comunitatController.crearBd);
+
 module.exports = rutesComunitat;

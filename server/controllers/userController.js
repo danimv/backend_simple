@@ -16,13 +16,7 @@ let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
 // Vista usuaris
 exports.view = (req, res) => {
   let alert2 = false;
-  conn.all(
-    'CREATE TABLE IF NOT EXISTS usuari (idUsuari INT, idComunitat INT, dataAlta TEXT, dataActualitzacio TEXT, nom TEXT, cognoms TEXT, email TEXT, telefon INT, coeficient INT, estat TEXT, comentaris TXT)',
-    (err, result) => {
-      if (err) return rej(err);
-      acc();
-    },
-  );
+  
   // Sqlite connexió 
   conn.all('SELECT * FROM usuari ORDER BY idComunitat ASC', (err, rows) => {
     // Si no hi ha error 
@@ -35,6 +29,8 @@ exports.view = (req, res) => {
         res.render('usuaris', { rows, alert, alert2, alert3, cT });
       });
     } else {
+      alert2 = 'No es pot accedir a la base de dades';
+      res.render('usuaris', {alert2});
       console.log(err);
     }
   });

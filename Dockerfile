@@ -5,5 +5,5 @@ RUN apk add --no-cache python3 g++ make
 COPY . .
 RUN yarn install --production
 CMD ["node", "app.js"]
-EXPOSE 5000
+EXPOSE 5002
 
