@@ -10,18 +10,22 @@ let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
 // Vista comunitat
 exports.view = (req, res) => {
   let alert2 = false;
-  res.render('comunitat');  
+  res.render('comunitat');
 }
 exports.view2 = (req, res) => {
-  res.render('config_comunitat');  
+  res.render('config_comunitat');
 }
 
 exports.crearBd = (req, res) => {
   conn.all(
-    'CREATE TABLE IF NOT EXISTS usuari (idUsuari INT, idComunitat INT, dataAlta TEXT, dataActualitzacio TEXT, nom TEXT, cognoms TEXT, email TEXT, telefon INT, coeficient INT, estat TEXT, comentaris TEXT)',
-    (err, result) => {
-      if (err) return rej(err);
-      res.render('config_comunitat', {result});       
+    'CREATE TABLE IF NOT EXISTS usuari (idUsuari INTEGER PRIMARY KEY, idComunitat INTEGER, dataAlta TEXT, dataActualitzacio TEXT, nom TEXT, cognoms TEXT, email TEXT, telefon INTEGER, coeficient INTEGER, estat TEXT, comentaris TEXT, PRIMARY KEY("idUsuari" AUTOINCREMENT))',
+    (err, result1) => {
+      conn.all(
+        'CREATE TABLE IF NOT EXISTS coeficient (idCoeficient INTEGER PRIMARY KEY, idUsuari INTEGER, data TEXT, coeficient INTEGER, estat TEXT, comentaris TEXT, PRIMARY KEY("idCoeficient" AUTOINCREMENT))',
+        (err, result2) => {
+          if (err) return rej(err);
+          res.render('config_comunitat', {result1, result2});
+        });
     },
-  );   
+  );
 }

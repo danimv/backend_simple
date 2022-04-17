@@ -6,9 +6,15 @@
     <a style="font-size: 150%;" type="link" role="button" href="/comunitat/crear_bd" class="btn btn-outline-primary">Crear Base de Dades</a>
     </div>
 </div>
-{{!-- {{#if bdEstat}} --}}
+{{#if result1}}
     <div class="alert alert-primary alert-dismissible fade show" role="alert">
-      {{result}}
+      {{result1}}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-{{!-- {{/if}} --}}
+{{/if}}
+{{#if result2}}
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+      {{result2}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{{/if}}

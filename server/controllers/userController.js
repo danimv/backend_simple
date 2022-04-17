@@ -1,6 +1,6 @@
 let sqlite3 = require('sqlite3').verbose();
 const fs = require('fs');
-const location = process.env.SQLITE_DB_LOCATION || 'home/root/db_app/comunitat.db';
+const location = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat.db';//'home/root/db_app/comunitat.db';
 const dirName = require('path').dirname(location);
 if (!fs.existsSync(dirName)) {
   fs.mkdirSync(dirName, { recursive: true });
@@ -16,7 +16,7 @@ let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
 // Vista usuaris
 exports.view = (req, res) => {
   let alert2 = false;
-  
+
   // Sqlite connexió 
   conn.all('SELECT * FROM usuari ORDER BY idComunitat ASC', (err, rows) => {
     // Si no hi ha error 
@@ -30,7 +30,7 @@ exports.view = (req, res) => {
       });
     } else {
       alert2 = 'No es pot accedir a la base de dades';
-      res.render('usuaris', {alert2});
+      res.render('usuaris', { alert2 });
       console.log(err);
     }
   });
@@ -75,25 +75,33 @@ exports.create = (req, res) => {
   coeficient = coeficient.replace(",", ".");
   // Calcular id usuari i Insert Sqlite
   assignarIdUsuari(function getId(result2) {
-    processSqlite(result2);
+    if (estat == 'Baixa') {
+      processSqlite('--');
+    } else {
+      processSqlite(result2);
+    }
   });
   function processSqlite(idComunitat) {
     conn.all('INSERT INTO usuari(idComunitat, nom, cognoms, email, telefon, coeficient, estat, comentaris, dataAlta, dataActualitzacio) VALUES (?,?,?,?,?,?,?,?,?,?)', [idComunitat, nom, cognoms, email, telefon, coeficient, estat, comentaris, data, data], (err, rows) => {
+      // conn.all('INSERT INTO usuari(idComunitat) VALUES (?)', [idComunitat], (err, rows) => {
       if (!err) {
         conn.all('SELECT idUsuari FROM usuari WHERE idComunitat = ?', [idComunitat], (err, rows) => {
-          conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris) VALUES (?,?,?,?)', [rows[0].idUsuari, coeficient, data, comentaris], (err, rows) => {
-            if (!err) {
-              calculaCoeficient(function getCoeficient(result) {
-                alert2 = result[1];
-                cT = result[0];
-                res.redirect('/usuaris/?alert3=' + `S'ha creat correctament un usuari nou: ${nom} ${cognoms}`);
-              });
-            } else {
-              console.log(err);
-            }
-          });
+        conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris) VALUES (?,?,?,?)', [rows[0].idUsuari, coeficient, data, comentaris], (err, rows) => {
+        if (!err) {
+        calculaCoeficient(function getCoeficient(result) {
+        alert2 = result[1];
+        cT = result[0];
+        res.redirect('/usuaris/?alert3=' + `S'ha creat correctament un usuari nou:') ${nom} ${cognoms}`);
+        // res.redirect('/usuaris');
+        });
+        } else {
+        console.log(err);
+        }
+        });
         });
       } else {
+        alert2 = 'No es pot accedir a la base de dades';
+        res.render('usuaris', { alert2 });
         console.log(err);
       }
       console.log('Editant l`usuari');
@@ -243,9 +251,22 @@ function calculaCoeficient(callback) {
 
 //Funcio calcul coeficient
 function assignarIdUsuari(callback2) {
-  conn.all('SELECT idComunitat + 1 FROM usuari WHERE NOT EXISTS (SELECT 1 FROM usuari t2 WHERE t2.idComunitat = usuari.idComunitat + 1);', (err, rows) => {
-    let result2;
-    result2 = rows[0]["idComunitat + 1"];
+  conn.all('SELECT idComunitat FROM usuari WHERE estat = "Actiu" ORDER BY idComunitat ASC', (err, rows) => {
+    console.log("Point 0");
+    let idComunitatAnterior = 0;
+    let result2 = 1;
+    if (rows != null) {
+      console.log("Point 1");
+      for (let index = 0; index < rows.length; index++) {
+        result2 = idComunitatAnterior + 2;
+        if (rows[index].idComunitat != (idComunitatAnterior + 1)) {
+          console.log("Point 2");
+          result2 = idComunitatAnterior + 1;
+          break;
+        }
+        idComunitatAnterior++;
+      }
+    }
     if (result2 == null || result2 == '') {
       result2 = 999;
     }
