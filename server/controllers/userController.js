@@ -1,6 +1,6 @@
 let sqlite3 = require('sqlite3').verbose();
 const fs = require('fs');
-const location = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat.db';//'home/root/db_app/comunitat.db';
+const location = process.env.SQLITE_DB_LOCATION || 'home/root/db_app/comunitat.db';
 const dirName = require('path').dirname(location);
 if (!fs.existsSync(dirName)) {
   fs.mkdirSync(dirName, { recursive: true });
