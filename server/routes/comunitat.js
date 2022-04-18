@@ -18,4 +18,9 @@ rutesComunitat.get('/crear_bd', function (req, res, next) {
     next();
 }, comunitatController.crearBd);
 
+rutesComunitat.get('/interrupcions', function (req, res, next) {
+    req.app.locals.layout = 'main';
+    next();
+}, comunitatController.interrupcions);
+
 module.exports = rutesComunitat;

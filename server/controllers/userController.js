@@ -86,22 +86,24 @@ exports.create = (req, res) => {
       // conn.all('INSERT INTO usuari(idComunitat) VALUES (?)', [idComunitat], (err, rows) => {
       if (!err) {
         conn.all('SELECT idUsuari FROM usuari WHERE idComunitat = ?', [idComunitat], (err, rows) => {
-        conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris) VALUES (?,?,?,?)', [rows[0].idUsuari, coeficient, data, comentaris], (err, rows) => {
-        if (!err) {
-        calculaCoeficient(function getCoeficient(result) {
-        alert2 = result[1];
-        cT = result[0];
-        res.redirect('/usuaris/?alert3=' + `S'ha creat correctament un usuari nou:') ${nom} ${cognoms}`);
-        // res.redirect('/usuaris');
-        });
-        } else {
-        console.log(err);
-        }
-        });
+          conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris) VALUES (?,?,?,?)', [rows[0].idUsuari, coeficient, data, comentaris], (err, rows) => {
+            if (!err) {
+              calculaCoeficient(function getCoeficient(result) {
+                alert2 = result[1];
+                cT = result[0];
+                res.redirect('/usuaris/?alert3=' + `S'ha creat correctament un usuari nou: ${nom} ${cognoms}`);
+                // res.redirect('/usuaris');
+              });
+            } else {
+              alert2 = 'No es pot inserir a la base de dades coeficient';
+              res.render('usuaris', { alert1 });
+              console.log(err);
+            }
+          });
         });
       } else {
-        alert2 = 'No es pot accedir a la base de dades';
-        res.render('usuaris', { alert2 });
+        alert2 = 'No es pot accedir a la base de dades usuari';
+        res.render('usuaris', { alert1 });
         console.log(err);
       }
       console.log('Editant l`usuari');
