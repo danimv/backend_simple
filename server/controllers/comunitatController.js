@@ -1,5 +1,5 @@
 let sqlite3 = require('sqlite3').verbose(); //'server/controllers/comunitat.db';//
-const location = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat.db';//'home/root/db_app/comunitat.db';
+const location = process.env.SQLITE_DB_LOCATION || 'home/root/db_app/comunitat.db';
 let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
   if (err) {
     console.error(err.message);

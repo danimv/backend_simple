@@ -1,6 +1,6 @@
 let sqlite3 = require('sqlite3').verbose();//'server/controllers/comunitat.db';//
 const fs = require('fs');
-const location = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat.db';//'home/root/db_app/comunitat.db';
+const location = process.env.SQLITE_DB_LOCATION || 'home/root/db_app/comunitat.db';
 const dirName = require('path').dirname(location);
 if (!fs.existsSync(dirName)) {
   fs.mkdirSync(dirName, { recursive: true });
@@ -86,7 +86,7 @@ exports.create = (req, res) => {
       // conn.all('INSERT INTO usuari(idComunitat) VALUES (?)', [idComunitat], (err, rows) => {
       if (!err) {
         conn.all('SELECT idUsuari FROM usuari WHERE idComunitat = ?', [idComunitat], (err, rows) => {
-          conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris, estat) VALUES (?,?,?,?)', [rows[0].idUsuari, coeficient, data, comentaris, estat], (err, rows) => {
+          conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris, estat) VALUES (?,?,?,?,?)', [rows[0].idUsuari, coeficient, data, comentaris, estat], (err, rows) => {
             if (!err) {
               calculaCoeficient(function getCoeficient(result) {
                 alert2 = result[1];
@@ -95,14 +95,14 @@ exports.create = (req, res) => {
                 // res.redirect('/usuaris');
               });
             } else {
-              alert2 = 'No es pot inserir a la base de dades coeficient';
+              alert1 = 'No es pot inserir a la base de dades "coeficient"';
               res.render('usuaris', { alert1 });
               console.log(err);
             }
           });
         });
       } else {
-        alert2 = 'No es pot accedir a la base de dades usuari';
+        alert1 = 'No es pot accedir a la base de dades "usuari"';
         res.render('usuaris', { alert1 });
         console.log(err);
       }

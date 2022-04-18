@@ -23,10 +23,14 @@ const handlebars = exphbs.create({ extname: '.hbs',defaultLayout:'main_initial.h
 app.engine('.hbs', handlebars.engine);
 app.set('view engine', '.hbs');
 
-// const rutesInici = require('./server/routes/inici');
+const rutesInici = require('./server/routes/inici');
 const rutesComunitat = require('./server/routes/comunitat');
 const rutesUsuari = require('./server/routes/usuaris');
-// app.use('/', rutesInici);
+
+app.use('/', rutesInici,function (req, res, next) {
+    req.app.locals.layout = 'main_initial'; 
+    next(); 
+    });
 
 app.use('/comunitat', rutesComunitat,function (req, res, next) {
     req.app.locals.layout = 'main'; 
