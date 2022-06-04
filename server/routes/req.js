@@ -5,12 +5,12 @@ const userController = require('../controllers/reqController');
 // Routes
 rutesReq.post('/init', function (req, res, next) {    
     next();
-},userController.find);
+},userController.init);
 rutesReq.post('/update', function (req, res, next) {   
     next();
-},userController.form);
+},userController.update);
 rutesReq.post('/start_user', function (req, res, next) {  
     next();
-},userController.form);
+},userController.start_user);
 
 module.exports = rutesReq;

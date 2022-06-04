@@ -1,6 +1,6 @@
 let sqlite3 = require('sqlite3').verbose();//'server/controllers/comunitat.db';//
 const fs = require('fs');
-const location = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat.db';// 'home/root/db_app/comunitat.db';
+const location = process.env.SQLITE_DB_LOCATION || 'home/root/db_app/comunitat.db';
 const dirName = require('path').dirname(location);
 if (!fs.existsSync(dirName)) {
   fs.mkdirSync(dirName, { recursive: true });
@@ -14,11 +14,11 @@ let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
 
 
 // Vista usuaris
-exports.view = (req, res) => {
+exports.init = (req, res) => {
   let alert2 = false;
 
   // Sqlite connexió 
-  conn.all('SELECT * FROM usuari ORDER BY idUsuari ASC', (err, rows) => {
+  conn.all('SELECT * FROM usuari ORDER BY idComunitat ASC', (err, rows) => {
     // Si no hi ha error 
     if (!err) {
       let alert = req.query.alert;
@@ -74,40 +74,41 @@ exports.create = (req, res) => {
   data = calcularData();
   coeficient = coeficient.replace(",", ".");
   // Calcular id usuari i Insert Sqlite
-  // assignarIdUsuari(function getId(result2) {
-  //   if (estat == 'Baixa') {
-  //     processSqlite('--');
-  //   } else {
-  //     processSqlite(result2);
-  //   }
-  // });
-  //function processSqlite(idComunitat) {
-  conn.all('INSERT INTO usuari(nom, cognoms, email, telefon, coeficient, estat, comentaris, dataAlta, dataActualitzacio) VALUES (?,?,?,?,?,?,?,?,?,?)', [nom, cognoms, email, telefon, coeficient, estat, comentaris, data, data], (err, rows) => {
-    // conn.all('INSERT INTO usuari(idComunitat) VALUES (?)', [idComunitat], (err, rows) => {
-    if (!err) {
-      conn.all('SELECT idUsuari FROM usuari WHERE nom = ? AND cognoms = ?', [nom, cognoms], (err, rows) => {
-        conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris, estat) VALUES (?,?,?,?,?)', [rows[0].idUsuari, coeficient, data, comentaris, estat], (err, rows) => {
-          if (!err) {
-            calculaCoeficient(function getCoeficient(result) {
-              alert2 = result[1];
-              cT = result[0];
-              res.redirect('/usuaris/?alert3=' + `S'ha creat correctament un usuari nou: ${nom} ${cognoms}`);
-              // res.redirect('/usuaris');
-            });
-          } else {
-            alert1 = 'No es pot inserir a la base de dades "coeficient"';
-            res.render('usuaris', { alert1 });
-            console.log(err);
-          }
-        });
-      });
+  assignarIdUsuari(function getId(result2) {
+    if (estat == 'Baixa') {
+      processSqlite('--');
     } else {
-      alert1 = 'No es pot accedir a la base de dades "usuari"';
-      res.render('usuaris', { alert1 });
-      console.log(err);
+      processSqlite(result2);
     }
-    console.log('Editant l`usuari');
   });
+  function processSqlite(idComunitat) {
+    conn.all('INSERT INTO usuari(idComunitat, nom, cognoms, email, telefon, coeficient, estat, comentaris, dataAlta, dataActualitzacio) VALUES (?,?,?,?,?,?,?,?,?,?)', [idComunitat, nom, cognoms, email, telefon, coeficient, estat, comentaris, data, data], (err, rows) => {
+      // conn.all('INSERT INTO usuari(idComunitat) VALUES (?)', [idComunitat], (err, rows) => {
+      if (!err) {
+        conn.all('SELECT idUsuari FROM usuari WHERE idComunitat = ?', [idComunitat], (err, rows) => {
+          conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris, estat) VALUES (?,?,?,?,?)', [rows[0].idUsuari, coeficient, data, comentaris, estat], (err, rows) => {
+            if (!err) {
+              calculaCoeficient(function getCoeficient(result) {
+                alert2 = result[1];
+                cT = result[0];
+                res.redirect('/usuaris/?alert3=' + `S'ha creat correctament un usuari nou: ${nom} ${cognoms}`);
+                // res.redirect('/usuaris');
+              });
+            } else {
+              alert1 = 'No es pot inserir a la base de dades "coeficient"';
+              res.render('usuaris', { alert1 });
+              console.log(err);
+            }
+          });
+        });
+      } else {
+        alert1 = 'No es pot accedir a la base de dades "usuari"';
+        res.render('usuaris', { alert1 });
+        console.log(err);
+      }
+      console.log('Editant l`usuari');
+    });
+  }
 }
 
 // Editar usuari
@@ -131,52 +132,53 @@ exports.edit = (req, res) => {
 exports.update = (req, res) => {
   var { nom, cognoms, email, telefon, coeficient, estat, comentaris } = req.body;
   data = calcularData();
-  idUsuari = req.params.idUsuari;
+  idComunitat = req.params.idComunitat;
   coeficient = coeficient.replace(",", ".");
-  // if (estat == 'Baixa') {
-  //   idComunitat = '--';
-  // }
-  // if ((idUsuari == '--' || idComunitat == null) & estat == 'Actiu') {
-  //   assignarIdUsuari(function getId(result2) {
-  //     processSqlite(result2);
-  //   });
-  // } else {
-  //   processSqlite(idComunitat)
-  // }
+  if (estat == 'Baixa') {
+    idComunitat = '--';
+  }
+  if ((idComunitat == '--' || idComunitat == null) & estat == 'Actiu') {
+    assignarIdUsuari(function getId(result2) {
+      processSqlite(result2);
+    });
+  } else {
+    processSqlite(idComunitat)
+  }
   // console.log(idUsuari);
   // Update Sqlite
-  // function processSqlite(idComunitat) {
-  conn.all('SELECT * FROM usuari WHERE idUsuari = ?', [idUsuari], (err, rows) => {
-    if (!err) {
-      console.log(rows[0].coeficient);
-      console.log(coeficient);
-      console.log(rows[0].estat);
-      if ((rows[0].coeficient != coeficient) || (rows[0].estat != estat)) {
-        actualitzarHistoricCoeficients();
+  function processSqlite(idComunitat) {
+    conn.all('SELECT * FROM usuari WHERE idUsuari = ?', [req.params.idUsuari], (err, rows) => {
+      if (!err) {
+        console.log(rows[0].coeficient);
+        console.log(coeficient);
+        console.log(rows[0].estat);
+        if ((rows[0].coeficient != coeficient) || (rows[0].estat != estat)) {
+          actualitzarHistoricCoeficients();
+        }
+        conn.all('UPDATE usuari SET idComunitat = ?, nom = ?, cognoms = ?, email = ?, telefon = ?, coeficient = ?, estat = ?, comentaris = ?, dataActualitzacio = ? WHERE idUsuari = ?', [idComunitat, nom, cognoms, email, telefon, coeficient, estat, comentaris, data, req.params.idUsuari], (err, rows) => {
+          // Si no hi ha error        
+          if (!err) {
+            calculaCoeficient(function getCoeficient(result) {
+              alert2 = result[1];
+              cT = result[0];
+              res.redirect('/usuaris/?alert3=' + `Les dades de l'usuari ${nom} ${cognoms} s'han actualitzat correctament`);
+            });
+          } else {
+            console.log(err);
+          }
+        });
+      } else {
+        console.log(err);
       }
-      conn.all('UPDATE usuari SET nom = ?, cognoms = ?, email = ?, telefon = ?, coeficient = ?, estat = ?, comentaris = ?, dataActualitzacio = ? WHERE idUsuari = ?', [nom, cognoms, email, telefon, coeficient, estat, comentaris, data, req.params.idUsuari], (err, rows) => {
-        // Si no hi ha error        
-        if (!err) {
-          calculaCoeficient(function getCoeficient(result) {
-            alert2 = result[1];
-            cT = result[0];
-            res.redirect('/usuaris/?alert3=' + `Les dades de l'usuari ${nom} ${cognoms} s'han actualitzat correctament`);
-          });
-        } else {
+      console.log('Actualitzant usuari');
+    });
+    function actualitzarHistoricCoeficients() {
+      conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris, estat) VALUES (?,?,?,?,?)', [req.params.idUsuari, coeficient, data, comentaris, estat], (err, rows) => {
+        if (err) {
           console.log(err);
         }
       });
-    } else {
-      console.log(err);
     }
-    console.log('Actualitzant usuari');
-  });
-  function actualitzarHistoricCoeficients() {
-    conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris, estat) VALUES (?,?,?,?,?)', [req.params.idUsuari, coeficient, data, comentaris, estat], (err, rows) => {
-      if (err) {
-        console.log(err);
-      }
-    });
   }
 }
 
@@ -193,7 +195,7 @@ exports.delete = (req, res) => {
   //   console.log('The data from user table: \n', rows);
   // });
   // Hide a record
-  conn.all('UPDATE usuari SET estat = ?, WHERE idUsuari = ?', ['Baixa', req.params.idUsuari], (err, rows) => {
+  conn.all('UPDATE usuari SET estat = ?, idComunitat = ? WHERE idUsuari = ?', ['Baixa', '--', req.params.idUsuari], (err, rows) => {
     if (!err) {
       let removedUser = encodeURIComponent('Usuari donat de baixa.');
       res.redirect('/usuaris/?alert=' + `S'ha donat de baixa a l'usuari`);
@@ -249,7 +251,7 @@ function calculaCoeficient(callback) {
   });
 }
 
-//Funcio assignar id
+//Funcio calcul coeficient
 function assignarIdUsuari(callback2) {
   conn.all('SELECT idComunitat FROM usuari WHERE estat = "Actiu" ORDER BY idComunitat ASC', (err, rows) => {
     console.log("Point 0");
