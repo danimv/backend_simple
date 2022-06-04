@@ -19,7 +19,7 @@ app.use(express.json()); // New
 app.use(express.static(__dirname + '/public'));
 
 // Templating Engine
-const handlebars = exphbs.create({ extname: '.hbs',defaultLayout:'main_initial.hbs' });
+const handlebars = exphbs.create({ extname: '.hbs', defaultLayout: 'main_initial.hbs' });
 app.engine('.hbs', handlebars.engine);
 app.set('view engine', '.hbs');
 
@@ -27,19 +27,23 @@ const rutesInici = require('./server/routes/inici');
 const rutesComunitat = require('./server/routes/comunitat');
 const rutesUsuari = require('./server/routes/usuaris');
 
-app.use('/', rutesInici,function (req, res, next) {
-    req.app.locals.layout = 'main_initial'; 
-    next(); 
-    });
-
-app.use('/comunitat', rutesComunitat,function (req, res, next) {
-    req.app.locals.layout = 'main'; 
-    next(); 
-    });
-app.use('/usuaris', rutesUsuari,function (req, res, next) {
-    req.app.locals.layout = 'main'; 
-    next(); 
-    });
+// Recursos i rutes
+app.use('/', rutesInici, function (req, res, next) {
+    req.app.locals.layout = 'main_initial';
+    next();
+});
+app.use('/comunitat', rutesComunitat, function (req, res, next) {
+    req.app.locals.layout = 'main';
+    next();
+});
+app.use('/usuaris', rutesUsuari, function (req, res, next) {
+    req.app.locals.layout = 'main';
+    next();
+});
+app.use('/req', rutesUsuari, function (req, res, next) {
+    req.app.locals.layout = 'main';
+    next();
+});
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
@@ -90,10 +94,10 @@ app.post('/auth', function (request, response) {
 });
 
 //Logout
-app.get('/logout',function (req, res, next) {
-    req.app.locals.layout = 'main_initial'; 
-    next(); 
-    } ,function (req, res) {
+app.get('/logout', function (req, res, next) {
+    req.app.locals.layout = 'main_initial';
+    next();
+}, function (req, res) {
     req.session.destroy();
     res.redirect('/');
 });
