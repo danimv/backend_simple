@@ -1,4 +1,6 @@
 let sqlite3 = require('sqlite3').verbose(); //'server/controllers/comunitat.db';//
+const fs = require('fs');
+const { nextTick } = require('process');
 const location = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat.db';//'home/root/db_app/comunitat.db';
 let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
   if (err) {
@@ -19,7 +21,7 @@ exports.interrupcions = (req, res) => {
   res.render('interrupcions');
 }
 
-exports.crearBd = (req, res) => {
+exports.crearBd = (req, res) => {  
   conn.all(
     'CREATE TABLE IF NOT EXISTS usuari (idUsuari INTEGER, dataAlta TEXT, dataActualitzacio TEXT, nom TEXT, cognoms TEXT, email TEXT, telefon INTEGER, coeficient INTEGER, estat TEXT, comentaris TEXT, PRIMARY KEY("idUsuari" AUTOINCREMENT))',
     (err, result) => {

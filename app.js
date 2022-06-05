@@ -4,6 +4,7 @@ const exphbs = require('express-handlebars');
 const session = require('express-session');
 require('dotenv').config();
 let alert = require('alert');
+const location = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat.db';// 'home/root/db_app/comunitat.db';
 const app = express();
 const port = process.env.PORT || 5010;
 
@@ -77,17 +78,17 @@ app.post('/auth', function (request, response) {
         // conn.all('SELECT * FROM credencial WHERE nomUsuari = ? AND contrasenya = ?', [username, password], function (error, results, fields) {
         //     if (error) throw error;
         //     if (results.length > 0) {
-            if(username=='admin' && password=='admin'){
-                request.session.loggedin = true;
-                request.session.username = username;
-                request.session.admin = true;
-                response.redirect('/comunitat');
-                // response.render('main');
-            } else {
-                response.redirect('/');
-                alert("USUARI O CONTRASENYA INCORRECTE");
-            }
-            response.end();
+        if (username == 'admin' && password == 'admin') {
+            request.session.loggedin = true;
+            request.session.username = username;
+            request.session.admin = true;
+            response.redirect('/comunitat');
+            // response.render('main');
+        } else {
+            response.redirect('/');
+            alert("USUARI O CONTRASENYA INCORRECTE");
+        }
+        response.end();
         // });
     } else {
         response.send('Introdueix l`usuari i la contrasenya!');
