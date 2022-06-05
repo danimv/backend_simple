@@ -82,7 +82,7 @@ exports.create = (req, res) => {
   //   }
   // });
   //function processSqlite(idComunitat) {
-  conn.all('INSERT INTO usuari(nom, cognoms, email, telefon, coeficient, estat, comentaris, dataAlta, dataActualitzacio) VALUES (?,?,?,?,?,?,?,?,?,?)', [nom, cognoms, email, telefon, coeficient, estat, comentaris, data, data], (err, rows) => {
+  conn.all('INSERT INTO usuari(nom, cognoms, email, telefon, coeficient, estat, comentaris, dataAlta, dataActualitzacio) VALUES (?,?,?,?,?,?,?,?,?)', [nom, cognoms, email, telefon, coeficient, estat, comentaris, data, data], (err, rows) => {
     // conn.all('INSERT INTO usuari(idComunitat) VALUES (?)', [idComunitat], (err, rows) => {
     if (!err) {
       conn.all('SELECT idUsuari FROM usuari WHERE nom = ? AND cognoms = ?', [nom, cognoms], (err, rows) => {

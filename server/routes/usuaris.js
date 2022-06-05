@@ -23,7 +23,7 @@ rutesUsuari.get('/edituser/:idUsuari', function (req, res, next) {
     req.app.locals.layout = 'main';
     next();
 }, userController.edit);
-rutesUsuari.post('/edituser/:idUsuari/:idComunitat', function (req, res, next) {
+rutesUsuari.post('/edituser/:idUsuari', function (req, res, next) {
     req.app.locals.layout = 'main';
     next();
 }, userController.update);

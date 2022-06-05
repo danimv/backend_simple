@@ -66,16 +66,17 @@ app.post('/auth', function (request, response) {
     let username = request.body.username;
     let password = request.body.password;
     if (username && password) {
-        //Connexió a Sqlite
-        let conn = new sqlite3.Database('server/controllers/comunitat.db', sqlite3.OPEN_READWRITE, (err) => {
-            if (err) {
-                console.error(err.message);
-            }
-            console.log('Connected to database.');
-        });
-        conn.all('SELECT * FROM credencial WHERE nomUsuari = ? AND contrasenya = ?', [username, password], function (error, results, fields) {
-            if (error) throw error;
-            if (results.length > 0) {
+        // //Connexió a Sqlite
+        // let conn = new sqlite3.Database('server/controllers/comunitat.db', sqlite3.OPEN_READWRITE, (err) => {
+        //     if (err) {
+        //         console.error(err.message);
+        //     }
+        //     console.log('Connected to database.');
+        // });
+        // conn.all('SELECT * FROM credencial WHERE nomUsuari = ? AND contrasenya = ?', [username, password], function (error, results, fields) {
+        //     if (error) throw error;
+        //     if (results.length > 0) {
+            if(username=='admin' && password=='admin'){
                 request.session.loggedin = true;
                 request.session.username = username;
                 request.session.admin = true;
@@ -86,7 +87,7 @@ app.post('/auth', function (request, response) {
                 alert("USUARI O CONTRASENYA INCORRECTE");
             }
             response.end();
-        });
+        // });
     } else {
         response.send('Introdueix l`usuari i la contrasenya!');
         response.end();

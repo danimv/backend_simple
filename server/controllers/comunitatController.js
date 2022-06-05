@@ -22,17 +22,27 @@ exports.interrupcions = (req, res) => {
 exports.crearBd = (req, res) => {
   conn.all(
     'CREATE TABLE IF NOT EXISTS usuari (idUsuari INTEGER, dataAlta TEXT, dataActualitzacio TEXT, nom TEXT, cognoms TEXT, email TEXT, telefon INTEGER, coeficient INTEGER, estat TEXT, comentaris TEXT, PRIMARY KEY("idUsuari" AUTOINCREMENT))',
-    (err, result1) => {
-      conn.all(
-        'INSERT INTO usuari(idComunitat, nom, coeficient, estat) VALUES (?,?,?,?)', [1000,"Administrador",0,"Baixa"],
-        (err, result2) => {
-          conn.all(
-            'CREATE TABLE IF NOT EXISTS coeficient (idCoeficient INTEGER, idUsuari INTEGER, data TEXT, coeficient INTEGER, estat TEXT, comentaris TEXT, PRIMARY KEY("idCoeficient" AUTOINCREMENT))',
-            (err, result2) => {
-              res.render('config_comunitat', { result1, result2 });
-            });
-        },
-      );
+    (err, result) => {
+      if (!err) {
+        conn.all(
+          'INSERT INTO usuari(idUsuari, nom, coeficient, estat) VALUES (?,?,?,?)', [1000, "Administrador", 0, "Baixa"],
+          (err, result1) => {
+            if (!err) {
+              conn.all(
+                'CREATE TABLE IF NOT EXISTS coeficient (idCoeficient INTEGER, idUsuari INTEGER, data TEXT, coeficient INTEGER, estat TEXT, comentaris TEXT, PRIMARY KEY("idCoeficient" AUTOINCREMENT))',
+                (err, result2) => {
+                  res.render('config_comunitat', { result1, result2 });
+                });
+            } else {
+              res.render('config_comunitat', { result1, result2});
+              console.log(err);
+            }
+          },
+        );
+      } else {
+        res.render('config_comunitat', { result1, result2});
+        console.log(err);
+      }
     },
   );
 }
