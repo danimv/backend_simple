@@ -56,22 +56,38 @@ exports.update = (req, res) => {
   var { users } = req.body;
   backupDb();
   deleteUsuaris();
-  conn.serialize(function () {
+  conn.serialize(function (err, rows) {
     let stmt = conn.prepare('INSERT INTO usuari(idUsuari,dataAlta, dataActualitzacio, nom, cognoms, email, telefon, coeficient, estat, comentaris) VALUES(?,?,?,?,?,?,?,?,?,?)');
     for (let i = 0; i < users.length; i++) {
-      stmt.run(users[i].idUsuari,users[i].dataAlta,users[i].dataActualitzacio,users[i].nom,users[i].cognoms,users[i].email,users[i].telefon,users[i].coeficient,users[i].estat,users[i].comentaris);
+      stmt.run(users[i].idUsuari, users[i].dataAlta, users[i].dataActualitzacio, users[i].nom, users[i].cognoms, users[i].email, users[i].telefon, users[i].coeficient, users[i].estat, users[i].comentaris);
     }
     stmt.finalize();
+    if (!err) {  
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      const body = {
+        result: 'OK',
+        strMsg: 'Usuaris actualitzat',
+        data: req.body,
+      }
+      const responseBody = { headers, method, url, body };
+      res.write(JSON.stringify(responseBody));
+      res.end();
+    } else {
+      res.statusCode = 400;
+      res.setHeader('Content-Type', 'application/json');
+      const body = {
+        result: 'KO',
+        strMsg: 'Usuaris NO actualitzats. ' + err,
+        data: req.body,
+      }
+      const responseBody = { headers, method, url, body };
+      res.write(JSON.stringify(responseBody));
+      res.end();
+      console.log(err);
+    }
   });
 
-  // let values = [];
-  // for (let i = 0; i < users.length; i++) {
-  //   values.push([users[i].nom]);
-  //   values2.push([users[i].cognoms]);
-  // }
-  // // Sqlite connexió 
-  // conn.all('INSERT INTO usuari(nom, cognoms) VALUES (?,?)', [values, values2], (err, rows) => {
-  //   if (!err) {
   //     res.statusCode = 200;
   //     res.setHeader('Content-Type', 'application/json');
   //     const body = {
