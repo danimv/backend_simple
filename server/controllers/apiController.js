@@ -14,30 +14,33 @@ let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
 
 
 // Vinculació comunitat amb servidor extern
-exports.init = (req, res) => {
-  req.on('error', (err) => {
-    console.error(err);
-  }).on('data', (chunk) => {
-    body.push(chunk);
-  }).on('end', () => {
-    body = Buffer.concat(body).toString();
-    res.on('error', (err) => {
-      console.error(err);
-    });
-    console.error("point 4");
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    // Note: the 2 lines above could be replaced with this next one:
-    // response.writeHead(200, {'Content-Type': 'application/json'})
-    const responseBody = { headers, method, url, body };
-    res.write(JSON.stringify(responseBody));
-    res.end();
-    // Note: the 2 lines above could be replaced with this next one:
-    // response.end(JSON.stringify(responseBody))
-  });
+exports.init = (req, res) => {  
+  const { headers, method, url } = req;
+  var { hashtag, idComunitat, nomComunitat, comentaris } = req.body; 
   // Sqlite connexió 
-  conn.all('INSERT INTO comunitat(idComunitat, hashtag, nomComunitat) VALUES (?,?,?)', [1000, "abcdef", "Cornella del terri"], (err, rows) => {
-    if (err) {
+  conn.all('INSERT INTO comunitat(idComunitat, hashtag, nomComunitat, comentaris) VALUES (?,?,?,?)', [idComunitat, hashtag, nomComunitat, comentaris], (err, rows) => {
+    if (!err) {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      const body = {
+        result: 'OK',
+        strMsg: 'Comunitat vinculada',
+        data: req.body,
+      }       
+      const responseBody = { headers, method, url, body};
+      res.write(JSON.stringify(responseBody));
+      res.end();
+    } else {
+      res.statusCode = 400;
+      res.setHeader('Content-Type', 'application/json');
+      const body = {
+        result: 'KO',
+        strMsg: 'Comunitat NO vinculada. ' + err,
+        data: message,
+      }       
+      const responseBody = { headers, method, url, body};
+      res.write(JSON.stringify(responseBody));
+      res.end();
       console.log(err);
     }
   });
