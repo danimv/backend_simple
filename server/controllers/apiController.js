@@ -57,9 +57,9 @@ exports.update = (req, res) => {
   backupDb();
   deleteUsuaris();
   conn.serialize(function () {
-    let stmt = conn.prepare('INSERT INTO usuari(dataAlta, dataActualitzacio, nom, cognoms, email, telefon, coeficient, estat, comentaris) VALUES(?,?,?,?,?,?,?,?,?)');
+    let stmt = conn.prepare('INSERT INTO usuari(idUsuari,dataAlta, dataActualitzacio, nom, cognoms, email, telefon, coeficient, estat, comentaris) VALUES(?,?,?,?,?,?,?,?,?,?)');
     for (let i = 0; i < users.length; i++) {
-      stmt.run(users[i].dataAlta,users[i].dataActualitzacio,users[i].nom,users[i].cognoms,users[i].email,users[i].telefon,users[i].coeficient,users[i].estat,users[i].comentaris);
+      stmt.run(users[i].idUsuari,users[i].dataAlta,users[i].dataActualitzacio,users[i].nom,users[i].cognoms,users[i].email,users[i].telefon,users[i].coeficient,users[i].estat,users[i].comentaris);
     }
     stmt.finalize();
   });
