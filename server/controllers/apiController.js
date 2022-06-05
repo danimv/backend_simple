@@ -86,33 +86,14 @@ exports.update = (req, res) => {
       res.end();
       console.log(err);
     }
-  });
-
-  //     res.statusCode = 200;
-  //     res.setHeader('Content-Type', 'application/json');
-  //     const body = {
-  //       result: 'OK',
-  //       strMsg: 'Usuari actualitzat',
-  //       data: req.body,
-  //     }
-  //     const responseBody = { headers, method, url, body };
-  //     res.write(JSON.stringify(responseBody));
-  //     res.end();
-  //   } else {
-  //     res.statusCode = 400;
-  //     res.setHeader('Content-Type', 'application/json');
-  //     const body = {
-  //       result: 'KO',
-  //       strMsg: 'Comunitat NO vinculada. ' + err,
-  //       data: req.body,
-  //     }
-  //     const responseBody = { headers, method, url, body };
-  //     res.write(JSON.stringify(responseBody));
-  //     res.end();
-  //     console.log(err);
-  //   }
-  // });
+  });  
 }
+// { "users":[
+//   {"idUsuari":"1021","nom":"Aron", "cognoms":"marquez", "telefon":"628611940"},
+//   {"idUsuari":"1023","nom":"kia", "cognoms":"pepa", "telefon":"64343423"},
+//   {"idUsuari":"1024","nom":"qa", "cognoms":"nina", "telefon":"984432234"}
+// ]
+// }
 
 //Funcio backup db
 function backupDb() {
