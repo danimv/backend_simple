@@ -33,7 +33,7 @@ exports.crearBd = (req, res) => {
                 (err, result2) => {
                    if (!err) {
                   conn.all(
-                    'CREATE TABLE IF NOT EXISTS comunitat (id INTEGER, idComunitat INTEGER, hashtag TEXT, nomComunitat TEXT, comentaris TEXTPRIMARY KEY("id" AUTOINCREMENT))',
+                    'CREATE TABLE IF NOT EXISTS comunitat (id INTEGER, idComunitat INTEGER, hashtag TEXT, nomComunitat TEXT, comentaris TEXT, PRIMARY KEY("id" AUTOINCREMENT))',
                     (err, result3) => {
                       res.render('config_comunitat', { result1 });
                     });  
