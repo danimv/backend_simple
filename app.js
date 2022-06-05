@@ -4,7 +4,6 @@ const exphbs = require('express-handlebars');
 const session = require('express-session');
 require('dotenv').config();
 let alert = require('alert');
-const location = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat.db';// 'home/root/db_app/comunitat.db';
 const app = express();
 const port = process.env.PORT || 5010;
 

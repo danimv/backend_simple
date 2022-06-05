@@ -12,7 +12,10 @@ let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
 // Vista comunitat
 exports.view = (req, res) => {
   let alert2 = false;
-  res.render('comunitat');
+  // Sqlite connexió 
+  conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
+    res.render('comunitat', { rows });
+  });
 }
 exports.view2 = (req, res) => {
   res.render('config_comunitat');
@@ -21,7 +24,7 @@ exports.interrupcions = (req, res) => {
   res.render('interrupcions');
 }
 
-exports.crearBd = (req, res) => {  
+exports.crearBd = (req, res) => {
   conn.all(
     'CREATE TABLE IF NOT EXISTS usuari (idUsuari INTEGER, dataAlta TEXT, dataActualitzacio TEXT, nom TEXT, cognoms TEXT, email TEXT, telefon INTEGER, coeficient INTEGER, estat TEXT, comentaris TEXT, PRIMARY KEY("idUsuari" AUTOINCREMENT))',
     (err, result) => {
@@ -33,24 +36,24 @@ exports.crearBd = (req, res) => {
               conn.all(
                 'CREATE TABLE IF NOT EXISTS coeficient (idCoeficient INTEGER, idUsuari INTEGER, data TEXT, coeficient INTEGER, estat TEXT, comentaris TEXT, PRIMARY KEY("idCoeficient" AUTOINCREMENT))',
                 (err, result2) => {
-                   if (!err) {
-                  conn.all(
-                    'CREATE TABLE IF NOT EXISTS comunitat (id INTEGER, idComunitat INTEGER, hashtag TEXT, nomComunitat TEXT, comentaris TEXT, PRIMARY KEY("id" AUTOINCREMENT))',
-                    (err, result3) => {
-                      res.render('config_comunitat', { result1 });
-                    });  
-                  } else {                   
+                  if (!err) {
+                    conn.all(
+                      'CREATE TABLE IF NOT EXISTS comunitat (id INTEGER, idComunitat INTEGER, hashtag TEXT, nomComunitat TEXT, comentaris TEXT, PRIMARY KEY("id" AUTOINCREMENT))',
+                      (err, result3) => {
+                        res.render('config_comunitat', { result1 });
+                      });
+                  } else {
                     console.log(err);
                   }
                 });
             } else {
-              res.render('config_comunitat', { result1, result2});
+              res.render('config_comunitat', { result1, result2 });
               console.log(err);
             }
           },
         );
       } else {
-        res.render('config_comunitat', { result1, result2});
+        res.render('config_comunitat', { result1, result2 });
         console.log(err);
       }
     },

@@ -62,7 +62,8 @@ exports.update = (req, res) => {
       stmt.run(users[i].idUsuari, users[i].dataAlta, users[i].dataActualitzacio, users[i].nom, users[i].cognoms, users[i].email, users[i].telefon, users[i].coeficient, users[i].estat, users[i].comentaris);
     }
     stmt.finalize();
-    if (!err) {  
+    checkCoeficients();
+    if (!err) {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
       const body = {
@@ -86,12 +87,12 @@ exports.update = (req, res) => {
       res.end();
       console.log(err);
     }
-  });  
+  });
 }
 // { "users":[
-//   {"idUsuari":"1021","nom":"Aron", "cognoms":"marquez", "telefon":"628611940"},
-//   {"idUsuari":"1023","nom":"kia", "cognoms":"pepa", "telefon":"64343423"},
-//   {"idUsuari":"1024","nom":"qa", "cognoms":"nina", "telefon":"984432234"}
+//   {"idUsuari":"1030","nom":"Aron", "cognoms":"marquez", "telefon":"628611940", "coeficient":"0,255", "estat":"Actiu"},
+//   {"idUsuari":"1028","nom":"kia", "cognoms":"pepa", "telefon":"64343423", "coeficient":"0,88","estat":"Actiu"},
+//   {"idUsuari":"1034","nom":"qa", "cognoms":"nina", "telefon":"984432234", "coeficient":"0,33","estat":"Baixa"}
 // ]
 // }
 
@@ -103,6 +104,7 @@ function backupDb() {
     console.log('Backup feta de comunitat.db');
   });
 }
+
 function deleteUsuaris() {
   // Sqlite connexió 
   conn.all('DELETE FROM usuari', (err, rows) => {
@@ -112,5 +114,33 @@ function deleteUsuaris() {
     } else {
       console.log(err);
     }
+  });
+}
+
+function checkCoeficients() {
+  let found = false;
+  // Sqlite connexió 
+  conn.all('SELECT * FROM usuari', (err, rows) => {
+    conn.all('SELECT * FROM coeficient', (err, rows2) => {
+      rows.forEach(row => {
+        rows2.forEach(row2 => {
+          if (row.idUsuari == row2.idUsuari) {
+            if (row2.coeficient != row.coeficient) {
+              conn.all('UPDATE coeficient SET coeficient = ?, data = ? WHERE idUsuari = ?', [row.coeficient, row.data, row.idUsuari], (err, rows4) => {
+              });
+            }
+            found = true;
+          }
+        });
+        if (found == false) {
+          conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris, estat) VALUES (?,?,?,?,?)', [row.idUsuari, row.coeficient, row.data, row.comentaris, row.estat], (err, rows4) => {
+            if (err) {
+              console.log(err);
+            }
+          });
+        }
+        found = false;
+      });
+    });
   });
 }
