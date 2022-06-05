@@ -7,9 +7,9 @@ const apiController = require('../controllers/apiController');
 rutesApi.post('/init', function (req, res, next) {    
     next();
 },apiController.init);
-// rutesApi.post('/update', function (req, res, next) {   
-//     next();
-// },apiController.update);
+rutesApi.post('/update', function (req, res, next) {   
+    next();
+},apiController.update);
 // rutesApi.post('/start_user', function (req, res, next) {  
 //     next();
 // },apiController.start_user);
