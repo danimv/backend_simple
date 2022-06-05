@@ -31,7 +31,15 @@ exports.crearBd = (req, res) => {
               conn.all(
                 'CREATE TABLE IF NOT EXISTS coeficient (idCoeficient INTEGER, idUsuari INTEGER, data TEXT, coeficient INTEGER, estat TEXT, comentaris TEXT, PRIMARY KEY("idCoeficient" AUTOINCREMENT))',
                 (err, result2) => {
-                  res.render('config_comunitat', { result1, result2 });
+                   if (!err) {
+                  conn.all(
+                    'CREATE TABLE IF NOT EXISTS comunitat (id INTEGER, idComunitat INTEGER, hashtag TEXT, nomComunitat TEXT, comentaris TEXTPRIMARY KEY("id" AUTOINCREMENT))',
+                    (err, result3) => {
+                      res.render('config_comunitat', { result1 });
+                    });  
+                  } else {                   
+                    console.log(err);
+                  }
                 });
             } else {
               res.render('config_comunitat', { result1, result2});

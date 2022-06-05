@@ -26,6 +26,7 @@ app.set('view engine', '.hbs');
 const rutesInici = require('./server/routes/inici');
 const rutesComunitat = require('./server/routes/comunitat');
 const rutesUsuari = require('./server/routes/usuaris');
+const rutesApi = require('./server/routes/api');
 
 // Recursos i rutes
 app.use('/', rutesInici, function (req, res, next) {
@@ -40,7 +41,7 @@ app.use('/usuaris', rutesUsuari, function (req, res, next) {
     req.app.locals.layout = 'main';
     next();
 });
-app.use('/req', rutesUsuari, function (req, res, next) {
+app.use('/api', rutesApi, function (req, res, next) {
     req.app.locals.layout = 'main';
     next();
 });
