@@ -67,7 +67,7 @@ exports.update = (req, res) => {
       res.setHeader('Content-Type', 'application/json');
       const body = {
         result: 'OK',
-        strMsg: 'Usuaris actualitzat',
+        strMsg: 'Usuaris actualitzats',
         data: req.body,
       }
       const responseBody = { headers, method, url, body };
