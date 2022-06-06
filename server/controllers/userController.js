@@ -1,5 +1,6 @@
 let sqlite3 = require('sqlite3').verbose();//'server/controllers/comunitat.db';//
 const fs = require('fs');
+const cC = require('../controllers/comunitatController');
 const location = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat.db';//'home/root/db_app/comunitat.db';
 const dirName = require('path').dirname(location);
 if (!fs.existsSync(dirName)) {
@@ -8,29 +9,36 @@ if (!fs.existsSync(dirName)) {
 let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
   if (err) {
     console.error(err.message);
+  } else {
+    console.log('Connected to database.');
   }
-  console.log('Connected to database.');
 });
 
 
 // Vista usuaris
 exports.view = (req, res) => {
   let alert2 = false;
-  // Sqlite connexió 
-  conn.all('SELECT * FROM usuari ORDER BY idUsuari ASC', (err, rows) => {
-    // Si no hi ha error 
-    if (!err) {
-      let alert = req.query.alert;
-      let alert3 = req.query.alert3;
-      calculaCoeficient(function getCoeficient(result) {
-        alert2 = result[1];
-        cT = result[0];
-        res.render('usuaris', { rows, alert, alert2, alert3, cT });
+  cC.checkFileExists(location, function check(error) {
+    if (!error) {
+      // Sqlite connexió 
+      conn.all('SELECT * FROM usuari ORDER BY idUsuari ASC', (err, rows) => {
+        // Si no hi ha error 
+        if (!err) {
+          let alert = req.query.alert;
+          let alert3 = req.query.alert3;
+          calculaCoeficient(function getCoeficient(result) {
+            alert2 = result[1];
+            cT = result[0];
+            res.render('usuaris', { rows, alert, alert2, alert3, cT });
+          });
+        } else {
+          alert2 = 'No es pot accedir a la base de dades';
+          res.render('usuaris', { alert2 });
+          console.log(err);
+        }
       });
     } else {
-      alert2 = 'No es pot accedir a la base de dades';
-      res.render('usuaris', { alert2 });
-      console.log(err);
+      res.render('usuaris');
     }
   });
 }
@@ -121,7 +129,7 @@ exports.update = (req, res) => {
   var { nom, cognoms, email, telefon, coeficient, estat, vinculat, comentaris } = req.body;
   data = calcularData();
   idUsuari = req.params.idUsuari;
-  coeficient = coeficient.replace(",", ".");  
+  coeficient = coeficient.replace(",", ".");
   conn.all('SELECT * FROM usuari WHERE idUsuari = ?', [idUsuari], (err, rows) => {
     if (!err) {
       console.log(rows[0].coeficient);
