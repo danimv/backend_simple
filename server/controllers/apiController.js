@@ -61,11 +61,16 @@ exports.update = (req, res) => {
   backupDb();
   deleteUsuaris();
   conn.serialize(function (err, rows) {
-    let stmt = conn.prepare('INSERT INTO usuari(idUsuari,dataAlta, dataActualitzacio, nom, cognoms, email, telefon, coeficient, estat, comentaris) VALUES(?,?,?,?,?,?,?,?,?,?)');
+    let stmt = conn.prepare('INSERT INTO usuari(idUsuari,dataAlta, dataActualitzacio, nom, cognoms, email, telefon, coeficient, estat, vinculat, comentaris) VALUES(?,?,?,?,?,?,?,?,?,?,?)');
     for (let i = 0; i < users.length; i++) {
       coeficient = users[i].coeficient;
       coeficient = coeficient.replace(",", ".");
-      stmt.run(users[i].idUsuari, users[i].dataAlta, users[i].dataActualitzacio, users[i].nom, users[i].cognoms, users[i].email, users[i].telefon, coeficient, users[i].estat, users[i].comentaris);
+      if(users[i].vinculat == 1){
+        vinculat ="Sí";
+      }else{
+        vinculat ="No";
+      }
+      stmt.run(users[i].idUsuari, users[i].dataAlta, users[i].dataActualitzacio, users[i].nom, users[i].cognoms, users[i].email, users[i].telefon, coeficient, users[i].estat, vinculat, users[i].comentaris);
     }
     stmt.finalize();
     checkCoeficients();
@@ -96,11 +101,45 @@ exports.update = (req, res) => {
   });
 }
 // { "users":[
-//   {"idUsuari":"1030","nom":"Aron", "cognoms":"marquez", "telefon":"628611940", "coeficient":"0,255", "estat":"Actiu"},
-//   {"idUsuari":"1028","nom":"kia", "cognoms":"pepa", "telefon":"64343423", "coeficient":"0,88","estat":"Actiu"},
-//   {"idUsuari":"1034","nom":"qa", "cognoms":"nina", "telefon":"984432234", "coeficient":"0,33","estat":"Baixa"}
+//   {"idUsuari":"1011","nom":"Aron", "cognoms":"marquez", "telefon":"628611940", "coeficient":"0,755", "estat":"Actiu", "vinculat":"1"},
+//   {"idUsuari":"1012","nom":"kia", "cognoms":"pepa", "telefon":"64343423", "coeficient":"0.98","estat":"Actiu","vinculat":"0"},
+//   {"idUsuari":"10104","nom":"qa", "cognoms":"nina", "telefon":"984432234", "coeficient":"0,33","estat":"Baixa","vinculat":"1"}
 // ]
 // }
+
+// Usuari vinculat a la app
+exports.startUser = (req, res) => {
+  const { headers, method, url } = req;
+  var { idUsuari } = req.body;
+  // Sqlite connexió   
+  conn.all('UPDATE usuari SET vinculat = ? WHERE idUsuari = ?', ["Sí", idUsuari], (err, rows) => {
+    if (!err) {      
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      const body = {
+        result: 'OK',
+        strMsg: 'Usuari vinculat',
+        data: req.body,
+      }
+      const responseBody = { headers, method, url, body };
+      res.write(JSON.stringify(responseBody));
+      res.end();
+    } else {
+      res.statusCode = 400;
+      res.setHeader('Content-Type', 'application/json');
+      const body = {
+        result: 'KO',
+        strMsg: 'Usuari NO vinculat. ' + err,
+        data: req.body,
+      }
+      const responseBody = { headers, method, url, body };
+      res.write(JSON.stringify(responseBody));
+      res.end();
+      console.log(err);
+    }
+  });
+}
+
 
 //Funcio backup db
 function backupDb() {

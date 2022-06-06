@@ -33,16 +33,26 @@
   </div>
 </div>
 <div class="col-6">
-  <div class="form-floating mb-3">    
+  <div class="form-floating mb-3">
     <select class="form-control" id="select1" value="{{this.estat}}" placeholder="Estat" name="estat">
-     <option value="{{this.estat}}" hidden="hidden" selected="selected">{{this.estat}}</option>
+      <option value="{{this.estat}}" hidden="hidden" selected="selected">{{this.estat}}</option>
       <option value="Actiu">Actiu</option>
       <option value="Baixa">Baixa</option>
     </select>
-    <label for="floatingInput">Estat</label>    
+    <label for="floatingInput">Estat</label>
   </div>
 </div>
-<div class="col-12">
+<div class="col-6">
+  <div class="form-floating mb-3">
+    <select class="form-control" id="select2" value="{{this.vinculat}}" placeholder="Vinculat" name="vinculat">
+      <option value="{{this.vinculat}}" hidden="hidden" selected="selected">{{this.vinculat}}</option>
+      <option value="Sí">Sí</option>
+      <option value="No">No</option>
+    </select>
+    <label for="floatingInput">Vinculat</label>
+  </div>
+</div>
+<div class="col-6">
   <div class="form-floating mb-3">
     <textarea class="form-control" placeholder="Comentaris" id="comments" name="comentaris"
       style="height: 70px">{{this.comentaris}}</textarea>
@@ -59,8 +69,9 @@
     var email = document.forms["dadesUsuari"]["email"];
     var coeficient = document.forms["dadesUsuari"]["coeficient"];
     var estat = document.forms["dadesUsuari"]["estat"];
+    var vinculat = document.forms["dadesUsuari"]["vinculat"];
     //document.forms["dadesUsuari"]["coeficient"].value = document.forms["dadesUsuari"]["coeficient"].replace(',', '.'));
-    
+
     if (name.value == "") {
       alert("Introdueix el nom");
       name.focus();
@@ -81,10 +92,15 @@
       estat.focus();
       return false;
     }
+     if (vinculat.value == "") {
+      alert("Introdueix si l'usuari té l'app vinculada");
+      vinculat.focus();
+      return false;
+    }
     if (coeficient.value > 1 || coeficient.value < 0 || coeficient.value == "") {
       alert("Introdueix un coeficient entre 0 i 1");
       coeficient.focus();
       return false;
-    }    
+    }   
   }
 </script>

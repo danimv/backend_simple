@@ -69,10 +69,10 @@ exports.form = (req, res) => {
 
 // Afegir usuari
 exports.create = (req, res) => {
-  var { nom, cognoms, email, telefon, coeficient, estat, comentaris } = req.body;
+  var { nom, cognoms, email, telefon, coeficient, estat, vinculat, comentaris } = req.body;
   data = calcularData();
   coeficient = coeficient.replace(",", ".");
-  conn.all('INSERT INTO usuari(nom, cognoms, email, telefon, coeficient, estat, comentaris, dataAlta, dataActualitzacio) VALUES (?,?,?,?,?,?,?,?,?)', [nom, cognoms, email, telefon, coeficient, estat, comentaris, data, data], (err, rows) => {
+  conn.all('INSERT INTO usuari(nom, cognoms, email, telefon, coeficient, estat, vinculat, comentaris, dataAlta, dataActualitzacio) VALUES (?,?,?,?,?,?,?,?,?,?)', [nom, cognoms, email, telefon, coeficient, estat, vinculat, comentaris, data, data], (err, rows) => {
     if (!err) {
       conn.all('SELECT idUsuari FROM usuari WHERE nom = ? AND cognoms = ?', [nom, cognoms], (err, rows) => {
         conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris, estat) VALUES (?,?,?,?,?)', [rows[0].idUsuari, coeficient, data, comentaris, estat], (err, rows) => {
@@ -118,23 +118,10 @@ exports.edit = (req, res) => {
 
 // Actualitzar usuari
 exports.update = (req, res) => {
-  var { nom, cognoms, email, telefon, coeficient, estat, comentaris } = req.body;
+  var { nom, cognoms, email, telefon, coeficient, estat, vinculat, comentaris } = req.body;
   data = calcularData();
   idUsuari = req.params.idUsuari;
-  coeficient = coeficient.replace(",", ".");
-  // if (estat == 'Baixa') {
-  //   idComunitat = '--';
-  // }
-  // if ((idUsuari == '--' || idComunitat == null) & estat == 'Actiu') {
-  //   assignarIdUsuari(function getId(result2) {
-  //     processSqlite(result2);
-  //   });
-  // } else {
-  //   processSqlite(idComunitat)
-  // }
-  // console.log(idUsuari);
-  // Update Sqlite
-  // function processSqlite(idComunitat) {
+  coeficient = coeficient.replace(",", ".");  
   conn.all('SELECT * FROM usuari WHERE idUsuari = ?', [idUsuari], (err, rows) => {
     if (!err) {
       console.log(rows[0].coeficient);
@@ -143,7 +130,7 @@ exports.update = (req, res) => {
       if ((rows[0].coeficient != coeficient) || (rows[0].estat != estat)) {
         actualitzarHistoricCoeficients();
       }
-      conn.all('UPDATE usuari SET nom = ?, cognoms = ?, email = ?, telefon = ?, coeficient = ?, estat = ?, comentaris = ?, dataActualitzacio = ? WHERE idUsuari = ?', [nom, cognoms, email, telefon, coeficient, estat, comentaris, data, req.params.idUsuari], (err, rows) => {
+      conn.all('UPDATE usuari SET nom = ?, cognoms = ?, email = ?, telefon = ?, coeficient = ?, estat = ?, vinculat = ?, comentaris = ?, dataActualitzacio = ? WHERE idUsuari = ?', [nom, cognoms, email, telefon, coeficient, estat, vinculat, comentaris, data, req.params.idUsuari], (err, rows) => {
         // Si no hi ha error        
         if (!err) {
           calculaCoeficient(function getCoeficient(result) {

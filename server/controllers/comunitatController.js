@@ -27,7 +27,7 @@ exports.interrupcions = (req, res) => {
 
 exports.crearBd = (req, res) => {
   conn.all(
-    'CREATE TABLE IF NOT EXISTS usuari (idUsuari INTEGER, dataAlta TEXT, dataActualitzacio TEXT, nom TEXT, cognoms TEXT, email TEXT, telefon INTEGER, coeficient INTEGER, estat TEXT, comentaris TEXT, PRIMARY KEY("idUsuari" AUTOINCREMENT))',
+    'CREATE TABLE IF NOT EXISTS usuari (idUsuari INTEGER, dataAlta TEXT, dataActualitzacio TEXT, nom TEXT, cognoms TEXT, email TEXT, telefon INTEGER, coeficient INTEGER, estat TEXT, vinculat TEXT, comentaris TEXT, PRIMARY KEY("idUsuari" AUTOINCREMENT))',
     (err, result) => {
       if (!err) {
         conn.all(
