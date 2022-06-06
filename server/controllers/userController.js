@@ -72,17 +72,7 @@ exports.create = (req, res) => {
   var { nom, cognoms, email, telefon, coeficient, estat, comentaris } = req.body;
   data = calcularData();
   coeficient = coeficient.replace(",", ".");
-  // Calcular id usuari i Insert Sqlite
-  // assignarIdUsuari(function getId(result2) {
-  //   if (estat == 'Baixa') {
-  //     processSqlite('--');
-  //   } else {
-  //     processSqlite(result2);
-  //   }
-  // });
-  //function processSqlite(idComunitat) {
   conn.all('INSERT INTO usuari(nom, cognoms, email, telefon, coeficient, estat, comentaris, dataAlta, dataActualitzacio) VALUES (?,?,?,?,?,?,?,?,?)', [nom, cognoms, email, telefon, coeficient, estat, comentaris, data, data], (err, rows) => {
-    // conn.all('INSERT INTO usuari(idComunitat) VALUES (?)', [idComunitat], (err, rows) => {
     if (!err) {
       conn.all('SELECT idUsuari FROM usuari WHERE nom = ? AND cognoms = ?', [nom, cognoms], (err, rows) => {
         conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris, estat) VALUES (?,?,?,?,?)', [rows[0].idUsuari, coeficient, data, comentaris, estat], (err, rows) => {

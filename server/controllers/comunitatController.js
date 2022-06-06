@@ -14,6 +14,7 @@ exports.view = (req, res) => {
   let alert2 = false;
   // Sqlite connexió 
   conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
+    console.log(rows);
     res.render('comunitat', { rows });
   });
 }
@@ -30,30 +31,20 @@ exports.crearBd = (req, res) => {
     (err, result) => {
       if (!err) {
         conn.all(
-          'INSERT INTO usuari(idUsuari, nom, coeficient, estat) VALUES (?,?,?,?)', [1000, "Administrador", 0, "Baixa"],
-          (err, result1) => {
+          'CREATE TABLE IF NOT EXISTS coeficient (idCoeficient INTEGER, idUsuari INTEGER, data TEXT, coeficient INTEGER, estat TEXT, comentaris TEXT, PRIMARY KEY("idCoeficient" AUTOINCREMENT))',
+          (err, result2) => {
             if (!err) {
               conn.all(
-                'CREATE TABLE IF NOT EXISTS coeficient (idCoeficient INTEGER, idUsuari INTEGER, data TEXT, coeficient INTEGER, estat TEXT, comentaris TEXT, PRIMARY KEY("idCoeficient" AUTOINCREMENT))',
-                (err, result2) => {
-                  if (!err) {
-                    conn.all(
-                      'CREATE TABLE IF NOT EXISTS comunitat (id INTEGER, idComunitat INTEGER, hashtag TEXT, nomComunitat TEXT, comentaris TEXT, PRIMARY KEY("id" AUTOINCREMENT))',
-                      (err, result3) => {
-                        res.render('config_comunitat', { result1 });
-                      });
-                  } else {
-                    console.log(err);
-                  }
+                'CREATE TABLE IF NOT EXISTS comunitat (id INTEGER, idComunitat INTEGER, hashtag TEXT, nomComunitat TEXT, comentaris TEXT, PRIMARY KEY("id" AUTOINCREMENT))',
+                (err, result3) => {
+                  res.render('config_comunitat');
                 });
             } else {
-              res.render('config_comunitat', { result1, result2 });
               console.log(err);
             }
-          },
-        );
+          });
       } else {
-        res.render('config_comunitat', { result1, result2 });
+        res.render('config_comunitat');
         console.log(err);
       }
     },

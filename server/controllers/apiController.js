@@ -19,8 +19,12 @@ exports.init = (req, res) => {
   const { headers, method, url } = req;
   var { hashtag, idComunitat, nomComunitat, comentaris } = req.body;
   // Sqlite connexió 
+  nomComunitat = nomComunitat.toUpperCase();
   conn.all('INSERT INTO comunitat(idComunitat, hashtag, nomComunitat, comentaris) VALUES (?,?,?,?)', [idComunitat, hashtag, nomComunitat, comentaris], (err, rows) => {
     if (!err) {
+      idUsuari = idComunitat*1000;
+      conn.all('INSERT INTO usuari(idUsuari, nom, coeficient, estat) VALUES (?,?,?,?)', [idUsuari, "Administrador", 0, "Baixa"], (err, result1) => {
+      });
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
       const body = {
