@@ -17,7 +17,6 @@ let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
 
 // Vinculació comunitat amb servidor extern
 exports.init = (req, res) => {
-  const { headers, method, url } = req;
   var { hashtag, idComunitat, nomComunitat, comentaris } = req.body;
   // Sqlite connexió 
   nomComunitat = nomComunitat.toUpperCase();
@@ -26,27 +25,9 @@ exports.init = (req, res) => {
       idUsuari = idComunitat * 1000;
       conn.all('INSERT INTO usuari(idUsuari, nom, coeficient, estat) VALUES (?,?,?,?)', [idUsuari, "Administrador", 0, "Baixa"], (err, result1) => {
       });
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
-      const body = {
-        result: 'OK',
-        strMsg: 'Comunitat vinculada',
-        data: req.body,
-      }
-      const responseBody = { headers, method, url, body };
-      res.write(JSON.stringify(responseBody));
-      res.end();
+      httpResponse(req, res, 200, 'OK', 'Comunitat vinculada');
     } else {
-      res.statusCode = 400;
-      res.setHeader('Content-Type', 'application/json');
-      const body = {
-        result: 'KO',
-        strMsg: 'Comunitat NO vinculada. ' + err,
-        data: req.body,
-      }
-      const responseBody = { headers, method, url, body };
-      res.write(JSON.stringify(responseBody));
-      res.end();
+      httpResponse(req, res, 400, 'KO', 'Comunitat NO vinculada. Error base de dades: ' + err);
       console.log(err);
     }
   });
@@ -57,7 +38,6 @@ exports.init = (req, res) => {
 
 // Vinculació comunitat amb servidor extern
 exports.update = (req, res) => {
-  const { headers, method, url } = req;
   var { users, idComunitat, hashtag } = req.body;
   conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
     if (!err) {
@@ -79,33 +59,17 @@ exports.update = (req, res) => {
           stmt.finalize();
           checkCoeficients();
           if (!err) {
-            res.statusCode = 200;
-            res.setHeader('Content-Type', 'application/json');
-            const body = {
-              result: 'OK',
-              strMsg: 'Usuaris actualitzats',
-              data: req.body,
-            }
-            const responseBody = { headers, method, url, body };
-            res.write(JSON.stringify(responseBody));
-            res.end();
+            httpResponse(req, res, 200, 'OK', 'Usuaris actualitzats');
           } else {
-            res.statusCode = 400;
-            res.setHeader('Content-Type', 'application/json');
-            const body = {
-              result: 'KO',
-              strMsg: 'Usuaris NO actualitzats. ' + err,
-              data: req.body,
-            }
-            const responseBody = { headers, method, url, body };
-            res.write(JSON.stringify(responseBody));
-            res.end();
+            httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Error base de dades ' + err);
             console.log(err);
           }
         });
-      }else{
-        console.log("no coincideixen idcomunitat o hashtag");
+      } else {
+        httpResponse(req, res, 400, 'KO', 'Usuaris NO actualitzats. No coincideixen idComunitat o Hashtag ');
       }
+    } else {
+      httpResponse(req, res, 400, 'KO', 'Usuaris NO actualitzats. Error base de dades: ' + err);
     }
   });
 }
@@ -120,37 +84,27 @@ exports.update = (req, res) => {
 
 // Usuari vinculat a la app
 exports.startUser = (req, res) => {
-  const { headers, method, url } = req;
-  var { idUsuari } = req.body;
-  // Sqlite connexió   
-  conn.all('UPDATE usuari SET vinculat = ? WHERE idUsuari = ?', ["Sí", idUsuari], (err, rows) => {
+  var { idUsuari, idComunitat, hashtag } = req.body;
+  conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
     if (!err) {
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
-      const body = {
-        result: 'OK',
-        strMsg: 'Usuari vinculat',
-        data: req.body,
+      if (rows[0].idComunitat == idComunitat && rows[0].hashtag == hashtag) {
+        // Sqlite connexió   
+        conn.all('UPDATE usuari SET vinculat = ? WHERE idUsuari = ?', ["Sí", idUsuari], (err, rows) => {
+          if (!err) {
+            httpResponse(req, res, 200, 'OK', 'Usuari vinculat');
+          } else {
+            httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. Error base de dades: ' + err);
+            console.log(err);
+          }
+        });
+      } else {
+        httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. No coincideixen idComunitat o Hashtag ');
       }
-      const responseBody = { headers, method, url, body };
-      res.write(JSON.stringify(responseBody));
-      res.end();
     } else {
-      res.statusCode = 400;
-      res.setHeader('Content-Type', 'application/json');
-      const body = {
-        result: 'KO',
-        strMsg: 'Usuari NO vinculat. ' + err,
-        data: req.body,
-      }
-      const responseBody = { headers, method, url, body };
-      res.write(JSON.stringify(responseBody));
-      res.end();
-      console.log(err);
+      httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. Error base de dades: ' + err);
     }
   });
 }
-
 
 //Funcio backup db
 function backupDb() {
@@ -161,6 +115,7 @@ function backupDb() {
   });
 }
 
+//Esborrar usuaris de la taula
 function deleteUsuaris() {
   // Sqlite connexió 
   conn.all('DELETE FROM usuari', (err, rows) => {
@@ -173,6 +128,7 @@ function deleteUsuaris() {
   });
 }
 
+// Comprovar si s'ha d'actualitzar la taula de coeficients
 function checkCoeficients() {
   let found = false;
   // Sqlite connexió 
@@ -201,3 +157,19 @@ function checkCoeficients() {
   });
 }
 
+// Resposta http
+function httpResponse(req, res, code, strResult, msg) {
+  res.statusCode = code;
+  res.setHeader('Content-Type', 'application/json');
+  const body = {
+    result: strResult,
+    strMsg: msg,
+    data: req.body,
+  }
+  headers = req.headers;
+  method = req.method;
+  url = req.url;
+  const responseBody = { headers, method, url, body };
+  res.write(JSON.stringify(responseBody));
+  res.end();
+}
