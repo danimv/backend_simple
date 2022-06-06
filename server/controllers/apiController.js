@@ -59,7 +59,9 @@ exports.update = (req, res) => {
   conn.serialize(function (err, rows) {
     let stmt = conn.prepare('INSERT INTO usuari(idUsuari,dataAlta, dataActualitzacio, nom, cognoms, email, telefon, coeficient, estat, comentaris) VALUES(?,?,?,?,?,?,?,?,?,?)');
     for (let i = 0; i < users.length; i++) {
-      stmt.run(users[i].idUsuari, users[i].dataAlta, users[i].dataActualitzacio, users[i].nom, users[i].cognoms, users[i].email, users[i].telefon, users[i].coeficient, users[i].estat, users[i].comentaris);
+      coeficient = users[i].coeficient;
+      coeficient = coeficient.replace(",", ".");
+      stmt.run(users[i].idUsuari, users[i].dataAlta, users[i].dataActualitzacio, users[i].nom, users[i].cognoms, users[i].email, users[i].telefon, coeficient, users[i].estat, users[i].comentaris);
     }
     stmt.finalize();
     checkCoeficients();
