@@ -19,20 +19,22 @@ let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
 exports.init = (req, res) => {
   var { hashtag, idComunitat, nomComunitat, comentaris } = req.body;
   // Sqlite connexió 
-  if (nomComunitat) {
+  if (nomComunitat && hashtag && idComunitat) {
     nomComunitat = nomComunitat.toUpperCase();
+    conn.all('INSERT INTO comunitat(idComunitat, hashtag, nomComunitat, comentaris) VALUES (?,?,?,?)', [idComunitat, hashtag, nomComunitat, comentaris], (err, rows) => {
+      if (!err) {
+        idUsuari = idComunitat * 1000;
+        conn.all('INSERT INTO usuari(idUsuari, nom, coeficient, estat) VALUES (?,?,?,?)', [idUsuari, "Administrador", 0, "Baixa"], (err, result1) => {
+        });
+        httpResponse(req, res, 200, 'OK', 'Comunitat vinculada');
+      } else {
+        httpResponse(req, res, 400, 'KO', 'Comunitat no vinculada. Error base de dades: ' + err);
+        console.log(err);
+      }
+    });
+  } else {
+    httpResponse(req, res, 400, 'KO', 'Comunitat no vinculada. Falta hashtag, idComunitat o nomComunitat');
   }
-  conn.all('INSERT INTO comunitat(idComunitat, hashtag, nomComunitat, comentaris) VALUES (?,?,?,?)', [idComunitat, hashtag, nomComunitat, comentaris], (err, rows) => {
-    if (!err) {
-      idUsuari = idComunitat * 1000;
-      conn.all('INSERT INTO usuari(idUsuari, nom, coeficient, estat) VALUES (?,?,?,?)', [idUsuari, "Administrador", 0, "Baixa"], (err, result1) => {
-      });
-      httpResponse(req, res, 200, 'OK', 'Comunitat vinculada');
-    } else {
-      httpResponse(req, res, 400, 'KO', 'Comunitat NO vinculada. Error base de dades: ' + err);
-      console.log(err);
-    }
-  });
 }
 // {"hashtag":"abcd",
 // "idComunitat":"1",
@@ -41,39 +43,43 @@ exports.init = (req, res) => {
 // Vinculació comunitat amb servidor extern
 exports.update = (req, res) => {
   var { users, idComunitat, hashtag } = req.body;
-  conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
-    if (!err) {
-      if (rows[0].idComunitat == idComunitat && rows[0].hashtag == hashtag) {
-        backupDb();
-        deleteUsuaris();
-        conn.serialize(function (err, rows) {
-          let stmt = conn.prepare('INSERT INTO usuari(idUsuari,dataAlta, dataActualitzacio, nom, cognoms, email, telefon, coeficient, estat, vinculat, comentaris) VALUES(?,?,?,?,?,?,?,?,?,?,?)');
-          for (let i = 0; i < users.length; i++) {
-            coeficient = users[i].coeficient;
-            coeficient = coeficient.replace(",", ".");
-            if (users[i].vinculat == 1) {
-              vinculat = "Sí";
-            } else {
-              vinculat = "No";
+  if (idComunitat && hashtag && users[0] && users[0].idUsuari && users[0].coeficient && users[0].vinculat) {
+    conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
+      if (!err) {
+        if (rows[0].idComunitat == idComunitat && rows[0].hashtag == hashtag) {
+          backupDb();
+          deleteUsuaris();
+          conn.serialize(function (err, rows) {
+            let stmt = conn.prepare('INSERT INTO usuari(idUsuari,dataAlta, dataActualitzacio, nom, cognoms, email, telefon, coeficient, estat, vinculat, comentaris) VALUES(?,?,?,?,?,?,?,?,?,?,?)');
+            for (let i = 0; i < users.length; i++) {
+              coeficient = users[i].coeficient;
+              coeficient = coeficient.replace(",", ".");
+              if (users[i].vinculat == 1) {
+                vinculat = "Sí";
+              } else {
+                vinculat = "No";
+              }
+              stmt.run(users[i].idUsuari, users[i].dataAlta, users[i].dataActualitzacio, users[i].nom, users[i].cognoms, users[i].email, users[i].telefon, coeficient, users[i].estat, vinculat, users[i].comentaris);
             }
-            stmt.run(users[i].idUsuari, users[i].dataAlta, users[i].dataActualitzacio, users[i].nom, users[i].cognoms, users[i].email, users[i].telefon, coeficient, users[i].estat, vinculat, users[i].comentaris);
-          }
-          stmt.finalize();
-          checkCoeficients();
-          if (!err) {
-            httpResponse(req, res, 200, 'OK', 'Usuaris actualitzats');
-          } else {
-            httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Error base de dades ' + err);
-            console.log(err);
-          }
-        });
+            stmt.finalize();
+            checkCoeficients();
+            if (!err) {
+              httpResponse(req, res, 200, 'OK', 'Usuaris actualitzats');
+            } else {
+              httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Error base de dades ' + err);
+              console.log(err);
+            }
+          });
+        } else {
+          httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. No coincideixen idComunitat o Hashtag ');
+        }
       } else {
-        httpResponse(req, res, 400, 'KO', 'Usuaris NO actualitzats. No coincideixen idComunitat o Hashtag ');
+        httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Error base de dades: ' + err);
       }
-    } else {
-      httpResponse(req, res, 400, 'KO', 'Usuaris NO actualitzats. Error base de dades: ' + err);
-    }
-  });
+    });
+  } else {
+    httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Falta hashtag, idComunitat o usuaris');
+  }
 }
 // { "idComunitat":"1",
 //  "hashtag":"abcd",
@@ -87,25 +93,29 @@ exports.update = (req, res) => {
 // Usuari vinculat a la app
 exports.startUser = (req, res) => {
   var { idUsuari, idComunitat, hashtag } = req.body;
-  conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
-    if (!err) {
-      if (rows[0].idComunitat == idComunitat && rows[0].hashtag == hashtag) {
-        // Sqlite connexió   
-        conn.all('UPDATE usuari SET vinculat = ? WHERE idUsuari = ?', ["Sí", idUsuari], (err, rows) => {
-          if (!err) {
-            httpResponse(req, res, 200, 'OK', 'Usuari vinculat');
-          } else {
-            httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. Error base de dades: ' + err);
-            console.log(err);
-          }
-        });
+  if (idComunitat && hashtag && idUsuari) {
+    conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
+      if (!err) {
+        if (rows[0].idComunitat == idComunitat && rows[0].hashtag == hashtag) {
+          // Sqlite connexió   
+          conn.all('UPDATE usuari SET vinculat = ? WHERE idUsuari = ?', ["Sí", idUsuari], (err, rows) => {
+            if (!err) {
+              httpResponse(req, res, 200, 'OK', 'Usuari vinculat');
+            } else {
+              httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. Error base de dades: ' + err);
+              console.log(err);
+            }
+          });
+        } else {
+          httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. No coincideixen idComunitat o Hashtag ');
+        }
       } else {
-        httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. No coincideixen idComunitat o Hashtag ');
+        httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. Error base de dades: ' + err);
       }
-    } else {
-      httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. Error base de dades: ' + err);
-    }
-  });
+    });
+  } else {
+    httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. Falta hashtag, idComunitat o idUsuari');
+  }
 }
 
 //Funcio backup db
