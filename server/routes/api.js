@@ -16,4 +16,9 @@ rutesApi.post('/start_user', function (req, res, next) {
     next();
 },apiController.startUser);
 
+rutesApi.get('/sync', function (req, res, next) {  
+    next();
+},apiController.sync);
+
+
 module.exports = rutesApi;

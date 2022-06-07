@@ -1,6 +1,6 @@
 let sqlite3 = require('sqlite3').verbose();//'server/controllers/comunitat.db';//
 const fs = require('fs');
-const cC = require('../controllers/comunitatController');
+const exported = require('../controllers/comunitatController');
 const location = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat.db';//'home/root/db_app/comunitat.db';
 const dirName = require('path').dirname(location);
 if (!fs.existsSync(dirName)) {
@@ -18,7 +18,7 @@ let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
 // Vista usuaris
 exports.view = (req, res) => {
   let alert2 = false;
-  cC.checkFileExists(location, function check(error) {
+  exported.checkFileExists(location, function check(error) {
     if (!error) {
       // Sqlite connexió 
       conn.all('SELECT * FROM usuari ORDER BY idUsuari ASC', (err, rows) => {
@@ -273,3 +273,4 @@ function calcularData() {
   return data2;
 }
 
+exports.calculaCoeficient = calculaCoeficient; 

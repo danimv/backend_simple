@@ -1,5 +1,7 @@
 let sqlite3 = require('sqlite3').verbose();//'server/controllers/comunitat.db';//
 const fs = require('fs');
+var request = require('request');
+const exported = require('../controllers/userController');
 const location = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat.db';//'home/root/db_app/comunitat.db';
 const locationBackup = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat_backup.db';//'home/root/db_app/comunitat_backup.db';
 const dirName = require('path').dirname(location);
@@ -118,6 +120,32 @@ exports.startUser = (req, res) => {
   }
 }
 
+// Sincronitzar usuaris amb servidor extern
+exports.sync = (req, res) => {
+  conn.all('SELECT * FROM usuari ORDER BY idUsuari ASC', (err, rows) => {
+    if (!err) {
+      var postData = rows.map((sqliteObj, index) => {
+        return Object.assign({}, sqliteObj);
+      });
+      console.log(postData);
+      // syncUsers(postData, clientHost, clientContext);
+      let alert = req.query.alert;
+      let alert3 = 'Usuaris sincronitzats correctament amb el servidor extern';
+      exported.calculaCoeficient(function getCoeficient(result) {
+        alert2 = result[1];
+        cT = result[0];
+        res.redirect('/usuaris/?alert3=' + `Usuaris sincronitzats correctament amb el servidor extern`);
+      });
+      
+    } else {
+      alert1 = 'No es pot sincronitzar amb el servidor extern"';
+      res.render('usuaris', { alert1 });
+      console.log(err);
+    }
+  });
+
+}
+
 //Funcio backup db
 function backupDb() {
   // File destination.txt will be created or overwritten by default.
@@ -184,4 +212,20 @@ function httpResponse(req, res, code, strResult, msg) {
   const responseBody = { headers, method, url, body };
   res.write(JSON.stringify(responseBody));
   res.end();
+}
+
+// HTTP post a servidor extern
+function syncUsers(postData, clientHost, clientContext) {
+  var clientServerOptions = {
+    uri: 'http://' + clientHost + '' + clientContext,
+    body: JSON.stringify(postData),
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
+  request(clientServerOptions, function (error, response) {
+    console.log(error, response.body);
+    return;
+  });
 }
