@@ -23,10 +23,10 @@ exports.init = (req, res) => {
   // Sqlite connexió 
   if (nomComunitat && hashtag && idComunitat) {
     nomComunitat = nomComunitat.toUpperCase();
-    conn.all('INSERT INTO comunitat(idComunitat, hashtag, nomComunitat, comentaris) VALUES (?,?,?,?)', [idComunitat, hashtag, nomComunitat, comentaris], (err, rows) => {
+    conn.all('INSERT INTO comunitat(idComunitat, hashtag, nomComunitat, comentaris, sync) VALUES (?,?,?,?,?)', [idComunitat, hashtag, nomComunitat, comentaris, 1], (err, rows) => {
       if (!err) {
         idUsuari = idComunitat * 1000;
-        conn.all('INSERT INTO usuari(idUsuari, nom, coeficient, estat) VALUES (?,?,?,?)', [idUsuari, "Administrador", 0, "Baixa"], (err, result1) => {
+        conn.all('INSERT INTO usuari(idUsuari, nom, coeficient, estat) VALUES (?,?,?,?)', [idUsuari, "Administrador", 0, 0], (err, result1) => {
         });
         httpResponse(req, res, 200, 'OK', 'Comunitat vinculada');
       } else {
@@ -42,7 +42,7 @@ exports.init = (req, res) => {
 // "idComunitat":"1",
 // "nomComunitat":"Cornella del Terri"}
 
-// Vinculació comunitat amb servidor extern
+// Vinculació dades del servidor extern
 exports.update = (req, res) => {
   var { users, idComunitat, hashtag } = req.body;
   if (idComunitat && hashtag && users[0] && users[0].idUsuari && users[0].coeficient && users[0].vinculat) {
@@ -56,11 +56,6 @@ exports.update = (req, res) => {
             for (let i = 0; i < users.length; i++) {
               coeficient = users[i].coeficient;
               coeficient = coeficient.replace(",", ".");
-              if (users[i].vinculat == 1) {
-                vinculat = "Sí";
-              } else {
-                vinculat = "No";
-              }
               stmt.run(users[i].idUsuari, users[i].dataAlta, users[i].dataActualitzacio, users[i].nom, users[i].cognoms, users[i].email, users[i].telefon, coeficient, users[i].estat, vinculat, users[i].comentaris);
             }
             stmt.finalize();
@@ -86,9 +81,9 @@ exports.update = (req, res) => {
 // { "idComunitat":"1",
 //  "hashtag":"abcd",
 //   "users":[
-//   {"idUsuari":"1011","nom":"Aron", "cognoms":"marquez", "telefon":"628611940", "coeficient":"0,755", "estat":"Actiu", "vinculat":"1"},
-//    {"idUsuari":"1012","nom":"kia", "cognoms":"pepa", "telefon":"64343423", "coeficient":"0.98","estat":"Actiu","vinculat":"0"},
-//    {"idUsuari":"10104","nom":"qa", "cognoms":"nina", "telefon":"984432234", "coeficient":"0,33","estat":"Baixa","vinculat":"1"}
+//   {"idUsuari":"1011","nom":"Aron", "cognoms":"marquez", "telefon":"628611940", "coeficient":"0,755", "estat":"0", "vinculat":"0"},
+//    {"idUsuari":"1012","nom":"kia", "cognoms":"pepa", "telefon":"64343423", "coeficient":"0.98","estat":"1","vinculat":"0"},
+//    {"idUsuari":"10104","nom":"qa", "cognoms":"nina", "telefon":"984432234", "coeficient":"0,33","estat":"Baixa","vinculat":"0"}
 //  ]
 //  }
 
@@ -100,7 +95,7 @@ exports.startUser = (req, res) => {
       if (!err) {
         if (rows[0].idComunitat == idComunitat && rows[0].hashtag == hashtag) {
           // Sqlite connexió   
-          conn.all('UPDATE usuari SET vinculat = ? WHERE idUsuari = ?', ["Sí", idUsuari], (err, rows) => {
+          conn.all('UPDATE usuari SET vinculat = ? WHERE idUsuari = ?', ["1", idUsuari], (err, rows) => {
             if (!err) {
               httpResponse(req, res, 200, 'OK', 'Usuari vinculat');
             } else {
@@ -127,23 +122,30 @@ exports.sync = (req, res) => {
       var postData = rows.map((sqliteObj, index) => {
         return Object.assign({}, sqliteObj);
       });
-      console.log(postData);
-      // syncUsers(postData, clientHost, clientContext);
-      let alert = req.query.alert;
-      let alert3 = 'Usuaris sincronitzats correctament amb el servidor extern';
-      exported.calculaCoeficient(function getCoeficient(result) {
-        alert2 = result[1];
-        cT = result[0];
-        res.redirect('/usuaris/?alert3=' + `Usuaris sincronitzats correctament amb el servidor extern`);
+      // console.log(postData);
+      syncUsers(postData, 'httpbin.org', '/post', 'POST', function getResponse(responseBody) {
+        console.log(responseBody);
+        conn.all('UPDATE comunitat SET sync =? WHERE id = (SELECT max(id) FROM comunitat)', [0], (err, rows) => {
+          if (!err) {
+            console.log("sync to 0");
+            let alert = req.query.alert;
+            let alert3 = 'Usuaris sincronitzats correctament amb el servidor extern';
+            exported.calculaCoeficient(function getCoeficient(result) {
+              alert2 = result[1];
+              cT = result[0];
+              res.redirect('/usuaris/?alert3=' + `Usuaris sincronitzats correctament amb el servidor extern`);
+            });
+          } else {
+            console.log(err);
+          }
+        });
       });
-      
     } else {
       alert1 = 'No es pot sincronitzar amb el servidor extern"';
       res.render('usuaris', { alert1 });
       console.log(err);
     }
   });
-
 }
 
 //Funcio backup db
@@ -214,18 +216,19 @@ function httpResponse(req, res, code, strResult, msg) {
   res.end();
 }
 
-// HTTP post a servidor extern
-function syncUsers(postData, clientHost, clientContext) {
+// HTTP request a servidor extern
+function syncUsers(postData, clientHost, clientContext, requestType, callback) {
   var clientServerOptions = {
     uri: 'http://' + clientHost + '' + clientContext,
     body: JSON.stringify(postData),
-    method: 'POST',
+    method: requestType,
     headers: {
       'Content-Type': 'application/json'
     }
   }
   request(clientServerOptions, function (error, response) {
-    console.log(error, response.body);
+    // console.log(error, response.body);
+    callback(response.body);
     return;
   });
 }

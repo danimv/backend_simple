@@ -38,15 +38,15 @@ exports.interrupcions = (req, res) => {
 
 function crearBd() {  
     conn.all(
-      'CREATE TABLE IF NOT EXISTS usuari (idUsuari INTEGER, dataAlta TEXT, dataActualitzacio TEXT, nom TEXT, cognoms TEXT, email TEXT, telefon INTEGER, coeficient INTEGER, estat TEXT, vinculat TEXT, comentaris TEXT, PRIMARY KEY("idUsuari" AUTOINCREMENT))',
+      'CREATE TABLE IF NOT EXISTS usuari (idUsuari INTEGER, dataAlta TEXT, dataActualitzacio TEXT, nom TEXT, cognoms TEXT, email TEXT, telefon INTEGER, coeficient INTEGER, estat INTEGER, vinculat INTEGER, comentaris TEXT, PRIMARY KEY("idUsuari" AUTOINCREMENT))',
       (err, result) => {
         if (!err) {
           conn.all(
-            'CREATE TABLE IF NOT EXISTS coeficient (idCoeficient INTEGER, idUsuari INTEGER, data TEXT, coeficient INTEGER, estat TEXT, comentaris TEXT, PRIMARY KEY("idCoeficient" AUTOINCREMENT))',
+            'CREATE TABLE IF NOT EXISTS coeficient (idCoeficient INTEGER, idUsuari INTEGER, data TEXT, coeficient INTEGER, estat INTEGER, comentaris TEXT, PRIMARY KEY("idCoeficient" AUTOINCREMENT))',
             (err, result2) => {
               if (!err) {
                 conn.all(
-                  'CREATE TABLE IF NOT EXISTS comunitat (id INTEGER, idComunitat INTEGER, hashtag TEXT, nomComunitat TEXT, comentaris TEXT, PRIMARY KEY("id" AUTOINCREMENT))',
+                  'CREATE TABLE IF NOT EXISTS comunitat (id INTEGER, idComunitat INTEGER, hashtag TEXT, nomComunitat TEXT, comentaris TEXT, sync INTEGER, PRIMARY KEY("id" AUTOINCREMENT))',
                   (err, result3) => {
                     if (!err) {
                       console.log("Taules revisades");
