@@ -20,6 +20,8 @@ let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
 // Vinculació comunitat amb servidor extern
 exports.init = (req, res) => {
   var { hashtag, idComunitat, nomComunitat, comentaris } = req.body;
+  // backupDb();
+  // deleteTable('comunitat');
   // Sqlite connexió 
   if (nomComunitat && hashtag && idComunitat) {
     nomComunitat = nomComunitat.toUpperCase();
@@ -50,13 +52,13 @@ exports.update = (req, res) => {
       if (!err) {
         if (rows[0].idComunitat == idComunitat && rows[0].hashtag == hashtag) {
           backupDb();
-          deleteUsuaris();
+          deleteTable('usuari');
           conn.serialize(function (err, rows) {
             let stmt = conn.prepare('INSERT INTO usuari(idUsuari,dataAlta, dataActualitzacio, nom, cognoms, email, telefon, coeficient, estat, vinculat, comentaris) VALUES(?,?,?,?,?,?,?,?,?,?,?)');
             for (let i = 0; i < users.length; i++) {
               coeficient = users[i].coeficient;
               coeficient = coeficient.replace(",", ".");
-              stmt.run(users[i].idUsuari, users[i].dataAlta, users[i].dataActualitzacio, users[i].nom, users[i].cognoms, users[i].email, users[i].telefon, coeficient, users[i].estat, vinculat, users[i].comentaris);
+              stmt.run(users[i].idUsuari, users[i].dataAlta, users[i].dataActualitzacio, users[i].nom, users[i].cognoms, users[i].email, users[i].telefon, coeficient, users[i].estat, users[i].vinculat, users[i].comentaris);
             }
             stmt.finalize();
             checkCoeficients();
@@ -117,14 +119,15 @@ exports.startUser = (req, res) => {
 
 // Sincronitzar usuaris amb servidor extern
 exports.sync = (req, res) => {
-  conn.all('SELECT * FROM usuari ORDER BY idUsuari ASC', (err, rows) => {
+  conn.all('SELECT * FROM usuari WHERE idUsuari > 2000 ORDER BY idUsuari ASC', (err, rows) => {
     if (!err) {
+      console.log(rows);
       var postData = rows.map((sqliteObj, index) => {
         return Object.assign({}, sqliteObj);
       });
       // console.log(postData);
       syncUsers(postData, 'httpbin.org', '/post', 'POST', function getResponse(responseBody) {
-        console.log(responseBody);
+        // console.log(responseBody);
         conn.all('UPDATE comunitat SET sync =? WHERE id = (SELECT max(id) FROM comunitat)', [0], (err, rows) => {
           if (!err) {
             console.log("sync to 0");
@@ -158,9 +161,9 @@ function backupDb() {
 }
 
 //Esborrar usuaris de la taula
-function deleteUsuaris() {
+function deleteTable(table) {
   // Sqlite connexió 
-  conn.all('DELETE FROM usuari', (err, rows) => {
+  conn.all('DELETE FROM ' + [table], (err, rows) => {
     // Si no hi ha error 
     if (!err) {
       console.log('Dades usuaris borrades');

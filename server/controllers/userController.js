@@ -228,7 +228,7 @@ exports.viewall = (req, res) => {
 
 //Funcio calcul coeficient
 function calculaCoeficient(callback) {
-  conn.all('SELECT * FROM usuari WHERE estat = "Actiu"', (err, rows) => {
+  conn.all('SELECT * FROM usuari WHERE estat = 1', (err, rows) => {
     let result = [];
     cT = 0;
     // Calcul coeficient total
