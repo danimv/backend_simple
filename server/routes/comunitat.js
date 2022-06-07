@@ -8,15 +8,15 @@ rutesComunitat.get('/', function (req, res, next) {
     next();
 }, comunitatController.view);
 
-rutesComunitat.get('/config', function (req, res, next) {
-    req.app.locals.layout = 'main';
-    next();
-}, comunitatController.view2);
+// rutesComunitat.get('/config', function (req, res, next) {
+//     req.app.locals.layout = 'main';
+//     next();
+// }, comunitatController.view2);
 
-rutesComunitat.get('/crear_bd', function (req, res, next) {
-    req.app.locals.layout = 'main';
-    next();
-}, comunitatController.crearBd);
+// rutesComunitat.get('/crear_bd', function (req, res, next) {
+//     req.app.locals.layout = 'main';
+//     next();
+// }, comunitatController.crearBd);
 
 rutesComunitat.get('/interrupcions', function (req, res, next) {
     req.app.locals.layout = 'main';

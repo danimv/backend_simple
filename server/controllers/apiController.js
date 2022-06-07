@@ -1,7 +1,7 @@
 let sqlite3 = require('sqlite3').verbose();//'server/controllers/comunitat.db';//
 const fs = require('fs');
-const location = process.env.SQLITE_DB_LOCATION || 'home/root/db_app/comunitat.db';
-const locationBackup = process.env.SQLITE_DB_LOCATION || 'home/root/db_app/comunitat_backup.db';
+const location = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat.db';//'home/root/db_app/comunitat.db';
+const locationBackup = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat_backup.db';//'home/root/db_app/comunitat_backup.db';
 const dirName = require('path').dirname(location);
 
 if (!fs.existsSync(dirName)) {
@@ -19,7 +19,9 @@ let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
 exports.init = (req, res) => {
   var { hashtag, idComunitat, nomComunitat, comentaris } = req.body;
   // Sqlite connexió 
-  nomComunitat = nomComunitat.toUpperCase();
+  if (nomComunitat) {
+    nomComunitat = nomComunitat.toUpperCase();
+  }
   conn.all('INSERT INTO comunitat(idComunitat, hashtag, nomComunitat, comentaris) VALUES (?,?,?,?)', [idComunitat, hashtag, nomComunitat, comentaris], (err, rows) => {
     if (!err) {
       idUsuari = idComunitat * 1000;
