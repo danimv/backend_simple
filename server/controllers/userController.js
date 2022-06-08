@@ -31,7 +31,6 @@ exports.view = (req, res) => {
                 alert2 = result[1];
                 cT = result[0];
                 syncAlert = sync[0].sync;
-                console.log(syncAlert);
                 res.render('usuaris', { rows, alert, alert2, alert3, cT, syncAlert });
               });
             } else {
@@ -41,7 +40,9 @@ exports.view = (req, res) => {
             }
           });
         } else {
-          res.render('inici');
+          alert2 = 'No es pot accedir a la base de dades';
+          res.render('usuaris', { alert2 });
+          console.log(err);
         }
       });
     } else {

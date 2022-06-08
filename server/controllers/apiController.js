@@ -121,16 +121,15 @@ exports.startUser = (req, res) => {
 exports.sync = (req, res) => {
   conn.all('SELECT * FROM usuari WHERE idUsuari > 2000 ORDER BY idUsuari ASC', (err, rows) => {
     if (!err) {
-      console.log(rows);
+      // console.log(rows);
       var postData = rows.map((sqliteObj, index) => {
         return Object.assign({}, sqliteObj);
       });
-      console.log(postData);
+      // console.log(postData);
       syncUsers(postData, 'httpbin.org', '/post', 'POST', function getResponse(responseBody) {
-        // console.log(responseBody);
+        console.log(responseBody);
         conn.all('UPDATE comunitat SET sync =? WHERE id = (SELECT max(id) FROM comunitat)', [0], (err, rows) => {
           if (!err) {
-            console.log("sync to 0");
             let alert = req.query.alert;
             let alert3 = 'Usuaris sincronitzats correctament amb el servidor extern';
             exportedC.calculaCoeficient(function getCoeficient(result) {
@@ -231,7 +230,7 @@ function syncUsers(postData, clientHost, clientContext, requestType, callback) {
   }
   request(clientServerOptions, function (error, response) {
     // console.log(error, response.body);
-    callback(response.body);
+    callback(response.statusCode);
     return;
   });
 }
