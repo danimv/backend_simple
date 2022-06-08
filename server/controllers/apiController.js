@@ -127,7 +127,8 @@ exports.sync = (req, res) => {
       });
       // console.log(postData);
       syncUsers(postData, 'httpbin.org', '/post', 'POST', function getResponse(responseBody) {
-        console.log(responseBody);
+        console.log(responseBody.statusCode);
+        console.log(responseBody.body);
         conn.all('UPDATE comunitat SET sync =? WHERE id = (SELECT max(id) FROM comunitat)', [0], (err, rows) => {
           if (!err) {
             let alert = req.query.alert;
@@ -230,7 +231,7 @@ function syncUsers(postData, clientHost, clientContext, requestType, callback) {
   }
   request(clientServerOptions, function (error, response) {
     // console.log(error, response.body);
-    callback(response.statusCode);
+    callback(response);
     return;
   });
 }
