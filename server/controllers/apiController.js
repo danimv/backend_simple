@@ -1,9 +1,9 @@
 let sqlite3 = require('sqlite3').verbose();//'server/controllers/comunitat.db';//
 const fs = require('fs');
 var request = require('request');
-const exported = require('../controllers/userController');
-const location = process.env.SQLITE_DB_LOCATION || 'home/root/db_app/comunitat.db';
-const locationBackup = process.env.SQLITE_DB_LOCATION || 'home/root/db_app/comunitat_backup.db';
+const exportedC = require('../controllers/userController');
+const location = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat.db';//'home/root/db_app/comunitat.db';
+const locationBackup = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat_backup.db';//'home/root/db_app/comunitat_backup.db';
 const dirName = require('path').dirname(location);
 
 if (!fs.existsSync(dirName)) {
@@ -125,7 +125,7 @@ exports.sync = (req, res) => {
       var postData = rows.map((sqliteObj, index) => {
         return Object.assign({}, sqliteObj);
       });
-      // console.log(postData);
+      console.log(postData);
       syncUsers(postData, 'httpbin.org', '/post', 'POST', function getResponse(responseBody) {
         // console.log(responseBody);
         conn.all('UPDATE comunitat SET sync =? WHERE id = (SELECT max(id) FROM comunitat)', [0], (err, rows) => {
@@ -133,7 +133,7 @@ exports.sync = (req, res) => {
             console.log("sync to 0");
             let alert = req.query.alert;
             let alert3 = 'Usuaris sincronitzats correctament amb el servidor extern';
-            exported.calculaCoeficient(function getCoeficient(result) {
+            exportedC.calculaCoeficient(function getCoeficient(result) {
               alert2 = result[1];
               cT = result[0];
               res.redirect('/usuaris/?alert3=' + `Usuaris sincronitzats correctament amb el servidor extern`);

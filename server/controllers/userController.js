@@ -1,7 +1,7 @@
 let sqlite3 = require('sqlite3').verbose();//'server/controllers/comunitat.db';//
 const fs = require('fs');
-const exported = require('../controllers/comunitatController');
-const location = process.env.SQLITE_DB_LOCATION || 'home/root/db_app/comunitat.db';
+const exportedC = require('../controllers/comunitatController');
+const location = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat.db';//'home/root/db_app/comunitat.db';
 const dirName = require('path').dirname(location);
 if (!fs.existsSync(dirName)) {
   fs.mkdirSync(dirName, { recursive: true });
@@ -17,14 +17,14 @@ let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
 // Vista usuaris
 exports.view = (req, res) => {
   let alert2 = false;
-  exported.checkFileExists(location, function check(error) {
+  exportedC.checkFileExists(location, function check(error) {
     if (!error) {
       // Sqlite connexió 
       conn.all('SELECT sync FROM comunitat ORDER BY id DESC LIMIT 1', (err, sync) => {
-        if (!err) {
+        if (!err && sync[0]) {
           conn.all('SELECT * FROM usuari ORDER BY idUsuari ASC', (err, rows) => {
             // Si no hi ha error 
-            if (!err) {
+            if (!err && rows[0]) {
               let alert = req.query.alert;
               let alert3 = req.query.alert3;
               calculaCoeficient(function getCoeficient(result) {
@@ -44,6 +44,8 @@ exports.view = (req, res) => {
           res.render('inici');
         }
       });
+    } else {
+      res.render('inici');
     }
   });
 }
@@ -53,7 +55,7 @@ exports.find = (req, res) => {
   let searchTerm = req.body.search;
   // Select Sqlite
   conn.all('SELECT * FROM usuari WHERE nom LIKE ? OR cognoms LIKE ?', ['%' + searchTerm + '%', '%' + searchTerm + '%'], (err, rows) => {
-    if (!err) {
+    if (!err && rows[0]) {
       calculaCoeficient(function getCoeficient(result) {
         alert2 = result[1];
         cT = result[0];
