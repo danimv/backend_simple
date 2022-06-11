@@ -3,13 +3,11 @@ const fs = require('fs');
 const exportedC = require('../controllers/comunitatController');
 const exportedD = require('../db/dbDriver');
 const location = exportedD.dbLocation();
-
 let conn = exportedD.dbConnection();
 
 // Vista usuaris
 exports.view = (req, res) => {
-  let alert2 = false;
-  console.log(exportedD.dbLocation);
+  let alert2 = false; 
   exportedC.checkFileExists(location, function check(error) {
     if (!error) {
       // Sqlite connexió 

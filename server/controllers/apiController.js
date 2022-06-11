@@ -4,26 +4,14 @@ var request = require('request');
 var crypto = require('crypto');
 var base64url = require('base64url');
 const exportedC = require('../controllers/userController');
-const location = process.env.SQLITE_DB_LOCATION || 'home/root/db_app/comunitat.db';
-const locationBackup = process.env.SQLITE_DB_LOCATION || 'home/root/db_app/comunitat_backup.db';
-const dirName = require('path').dirname(location);
-
-if (!fs.existsSync(dirName)) {
-  fs.mkdirSync(dirName, { recursive: true });
-}
-let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
-  if (err) {
-    console.error(err.message);
-  } else {
-    console.log('Connected to database.');
-  }
-});
+const exportedD = require('../db/dbDriver');
+const location = exportedD.dbLocation();
+const locationBackup = exportedD.dbLocationBackup();
+let conn = exportedD.dbConnection();
 
 // Vinculació comunitat amb servidor extern
 exports.init = (req, res) => {
   var { idComunitat, nomComunitat, comentaris } = req.body;
-  // console.log(req.headers);
-  // console.log(req.headers.authorization);
   token = req.headers.authorization;
   // backupDb();
   // deleteTable('comunitat');
@@ -58,7 +46,7 @@ exports.update = (req, res) => {
   if (idComunitat && users[0] && users[0].idUsuari && users[0].coeficient && users[0].vinculat) {
     conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
       if (!err) {
-        if (rows[0].idComunitat == idComunitat){//} && rows[0].hashtag == hashtag) {
+        if (rows[0].idComunitat == idComunitat) {//} && rows[0].hashtag == hashtag) {
           backupDb();
           deleteTable('usuari');
           conn.serialize(function (err, rows) {
@@ -105,7 +93,7 @@ exports.startUser = (req, res) => {
   if (idComunitat && idUsuari) {
     conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
       if (!err) {
-        if (rows[0].idComunitat == idComunitat){//} && rows[0].hashtag == hashtag) {
+        if (rows[0].idComunitat == idComunitat) {//} && rows[0].hashtag == hashtag) {
           // Sqlite connexió   
           conn.all('UPDATE usuari SET vinculat = ? WHERE idUsuari = ?', ["1", idUsuari], (err, rows) => {
             if (!err) {
@@ -188,17 +176,18 @@ function checkCoeficients() {
   let found = false;
   // Sqlite connexió 
   conn.all('SELECT * FROM usuari', (err, rows) => {
-    conn.all('SELECT * FROM coeficient', (err, rows2) => {
+    conn.all('SELECT * FROM coeficient ORDER BY idCoeficient DESC', (err, rows2) => {
       rows.forEach(row => {
         rows2.forEach(row2 => {
           if (row.idUsuari == row2.idUsuari) {
-            if (row2.coeficient != row.coeficient) {
+            if (row2.coeficient == row.coeficient) {
               console.log(row.coeficient);
               console.log(row2.coeficient);
-              conn.all('UPDATE coeficient SET coeficient = ?, data = ? WHERE idUsuari = ?', [row.coeficient, row.data, row.idUsuari], (err, rows4) => {
-              });
+              //conn.all('UPDATE coeficient SET coeficient = ?, data = ? WHERE idUsuari = ?', [row.coeficient, row.data, row.idUsuari], (err, rows4) => {
+              // });
+              found = true;
             }
-            found = true;
+            
           }
         });
         if (found == false) {

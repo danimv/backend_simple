@@ -1,14 +1,9 @@
 let sqlite3 = require('sqlite3').verbose(); //'server/controllers/comunitat.db';//
 const fs = require('fs');
 const { nextTick } = require('process');
-const location = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat.db';//'home/root/db_app/comunitat.db';
-let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
-  if (err) {
-    console.error(err.message);
-  } else {
-    console.log('Connected to database.');
-  }
-});
+const exportedD = require('../db/dbDriver');
+const location = exportedD.dbLocation();
+let conn = exportedD.dbConnection();
 
 // Vista comunitat
 exports.view = (req, res) => {
