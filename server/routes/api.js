@@ -12,7 +12,7 @@ rutesApi.post('/update', function (req, res, next) {
     next();
 },apiController.update);
 
-rutesApi.post('/start_user', function (req, res, next) {  
+rutesApi.post('/init_user', function (req, res, next) {  
     next();
 },apiController.startUser);
 

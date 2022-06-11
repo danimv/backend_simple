@@ -1,6 +1,8 @@
 let sqlite3 = require('sqlite3').verbose();//'server/controllers/comunitat.db';//
 const fs = require('fs');
 var request = require('request');
+var crypto = require('crypto');
+var base64url = require('base64url');
 const exportedC = require('../controllers/userController');
 const location = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat.db';//'home/root/db_app/comunitat.db';
 const locationBackup = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat_backup.db';//'home/root/db_app/comunitat_backup.db';
@@ -19,13 +21,16 @@ let conn = new sqlite3.Database(location, sqlite3.OPEN_READWRITE, (err) => {
 
 // Vinculació comunitat amb servidor extern
 exports.init = (req, res) => {
-  var { hashtag, idComunitat, nomComunitat, comentaris } = req.body;
+  var { idComunitat, nomComunitat, comentaris } = req.body;
+  // console.log(req.headers);
+  // console.log(req.headers.authorization);
+  token = req.headers.authorization;
   // backupDb();
   // deleteTable('comunitat');
   // Sqlite connexió 
-  if (nomComunitat && hashtag && idComunitat) {
+  if (nomComunitat && idComunitat) {
     nomComunitat = nomComunitat.toUpperCase();
-    conn.all('INSERT INTO comunitat(idComunitat, hashtag, nomComunitat, comentaris, sync) VALUES (?,?,?,?,?)', [idComunitat, hashtag, nomComunitat, comentaris, 1], (err, rows) => {
+    conn.all('INSERT INTO comunitat(idComunitat, nomComunitat, comentaris, sync) VALUES (?,?,?,?)', [idComunitat, nomComunitat, comentaris, 1], (err, rows) => {
       if (!err) {
         idUsuari = idComunitat * 1000;
         conn.all('INSERT INTO usuari(idUsuari, nom, coeficient, estat) VALUES (?,?,?,?)', [idUsuari, "Administrador", 0, 0], (err, result1) => {
@@ -37,7 +42,7 @@ exports.init = (req, res) => {
       }
     });
   } else {
-    httpResponse(req, res, 400, 'KO', 'Comunitat no vinculada. Falta hashtag, idComunitat o nomComunitat');
+    httpResponse(req, res, 400, 'KO', 'Comunitat no vinculada. Falta idComunitat o nomComunitat');
   }
 }
 // {"hashtag":"abcd",
@@ -46,11 +51,14 @@ exports.init = (req, res) => {
 
 // Vinculació dades del servidor extern
 exports.update = (req, res) => {
-  var { users, idComunitat, hashtag } = req.body;
-  if (idComunitat && hashtag && users[0] && users[0].idUsuari && users[0].coeficient && users[0].vinculat) {
+  var { users, idComunitat } = req.body;
+  console.log(req.headers);
+  console.log(req.headers.authorization);
+  token = req.headers.authorization;
+  if (idComunitat && users[0] && users[0].idUsuari && users[0].coeficient && users[0].vinculat) {
     conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
       if (!err) {
-        if (rows[0].idComunitat == idComunitat && rows[0].hashtag == hashtag) {
+        if (rows[0].idComunitat == idComunitat){//} && rows[0].hashtag == hashtag) {
           backupDb();
           deleteTable('usuari');
           conn.serialize(function (err, rows) {
@@ -70,14 +78,14 @@ exports.update = (req, res) => {
             }
           });
         } else {
-          httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. No coincideixen idComunitat o Hashtag ');
+          httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. No coincideixen idComunitat');
         }
       } else {
         httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Error base de dades: ' + err);
       }
     });
   } else {
-    httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Falta hashtag, idComunitat o usuaris');
+    httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Falta idComunitat o usuaris');
   }
 }
 // { "idComunitat":"1",
@@ -91,11 +99,14 @@ exports.update = (req, res) => {
 
 // Usuari vinculat a la app
 exports.startUser = (req, res) => {
-  var { idUsuari, idComunitat, hashtag } = req.body;
-  if (idComunitat && hashtag && idUsuari) {
+  var { idUsuari, idComunitat } = req.body;
+  console.log(req.headers);
+  console.log(req.headers.authorization);
+  token = req.headers.authorization;
+  if (idComunitat && idUsuari) {
     conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
       if (!err) {
-        if (rows[0].idComunitat == idComunitat && rows[0].hashtag == hashtag) {
+        if (rows[0].idComunitat == idComunitat){//} && rows[0].hashtag == hashtag) {
           // Sqlite connexió   
           conn.all('UPDATE usuari SET vinculat = ? WHERE idUsuari = ?', ["1", idUsuari], (err, rows) => {
             if (!err) {
@@ -106,14 +117,14 @@ exports.startUser = (req, res) => {
             }
           });
         } else {
-          httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. No coincideixen idComunitat o Hashtag ');
+          httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. No coincideix idComunitat');
         }
       } else {
         httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. Error base de dades: ' + err);
       }
     });
   } else {
-    httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. Falta hashtag, idComunitat o idUsuari');
+    httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. Falta idComunitat o idUsuari');
   }
 }
 
@@ -126,9 +137,9 @@ exports.sync = (req, res) => {
         return Object.assign({}, sqliteObj);
       });
       // console.log(postData);
-      syncUsers(postData, 'httpbin.org', '/post', 'POST', function getResponse(responseBody) {
+      httpRequest(postData, 'httpbin.org', '/post', 'POST', function getResponse(responseBody) {
         console.log(responseBody.statusCode);
-        console.log(responseBody.body);
+        console.log(responseBody);
         conn.all('UPDATE comunitat SET sync =? WHERE id = (SELECT max(id) FROM comunitat)', [0], (err, rows) => {
           if (!err) {
             let alert = req.query.alert;
@@ -215,18 +226,20 @@ function httpResponse(req, res, code, strResult, msg) {
   method = req.method;
   url = req.url;
   const responseBody = { headers, method, url, body };
+  console.log(responseBody);
   res.write(JSON.stringify(responseBody));
   res.end();
 }
 
 // HTTP request a servidor extern
-function syncUsers(postData, clientHost, clientContext, requestType, callback) {
+function httpRequest(postData, clientHost, clientContext, requestType, callback) {
   var clientServerOptions = {
     uri: 'http://' + clientHost + '' + clientContext,
     body: JSON.stringify(postData),
     method: requestType,
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      "Authorization": base64url(crypto.randomBytes(20))
     }
   }
   request(clientServerOptions, function (error, response) {

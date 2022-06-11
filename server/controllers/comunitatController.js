@@ -46,7 +46,7 @@ function crearBd() {
             (err, result2) => {
               if (!err) {
                 conn.all(
-                  'CREATE TABLE IF NOT EXISTS comunitat (id INTEGER, idComunitat INTEGER, hashtag TEXT, nomComunitat TEXT, comentaris TEXT, sync INTEGER, PRIMARY KEY("id" AUTOINCREMENT))',
+                  'CREATE TABLE IF NOT EXISTS comunitat (id INTEGER, idComunitat INTEGER, nomComunitat TEXT, comentaris TEXT, sync INTEGER, PRIMARY KEY("id" AUTOINCREMENT))',
                   (err, result3) => {
                     if (!err) {
                       console.log("Taules revisades");
