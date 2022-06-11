@@ -4,8 +4,8 @@ var request = require('request');
 var crypto = require('crypto');
 var base64url = require('base64url');
 const exportedC = require('../controllers/userController');
-const location = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat.db';//'home/root/db_app/comunitat.db';
-const locationBackup = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat_backup.db';//'home/root/db_app/comunitat_backup.db';
+const location = process.env.SQLITE_DB_LOCATION || 'home/root/db_app/comunitat.db';
+const locationBackup = process.env.SQLITE_DB_LOCATION || 'home/root/db_app/comunitat_backup.db';
 const dirName = require('path').dirname(location);
 
 if (!fs.existsSync(dirName)) {
@@ -89,11 +89,10 @@ exports.update = (req, res) => {
   }
 }
 // { "idComunitat":"1",
-//  "hashtag":"abcd",
 //   "users":[
-//   {"idUsuari":"1011","nom":"Aron", "cognoms":"marquez", "telefon":"628611940", "coeficient":"0,755", "estat":"0", "vinculat":"0"},
-//    {"idUsuari":"1012","nom":"kia", "cognoms":"pepa", "telefon":"64343423", "coeficient":"0.98","estat":"1","vinculat":"0"},
-//    {"idUsuari":"10104","nom":"qa", "cognoms":"nina", "telefon":"984432234", "coeficient":"0,33","estat":"Baixa","vinculat":"0"}
+//   {"idUsuari":"1011","nom":"A", "cognoms":"M", "telefon":"628611940", "coeficient":"0,755", "estat":"0", "vinculat":"0"},
+//    {"idUsuari":"1012","nom":"T", "cognoms":"C", "telefon":"64343423", "coeficient":"0.98","estat":"1","vinculat":"0"},
+//    {"idUsuari":"1014","nom":"J", "cognoms":"O", "telefon":"984432234", "coeficient":"0,33","estat":"1","vinculat":"0"}
 //  ]
 //  }
 
@@ -194,6 +193,8 @@ function checkCoeficients() {
         rows2.forEach(row2 => {
           if (row.idUsuari == row2.idUsuari) {
             if (row2.coeficient != row.coeficient) {
+              console.log(row.coeficient);
+              console.log(row2.coeficient);
               conn.all('UPDATE coeficient SET coeficient = ?, data = ? WHERE idUsuari = ?', [row.coeficient, row.data, row.idUsuari], (err, rows4) => {
               });
             }
