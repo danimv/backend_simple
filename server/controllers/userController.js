@@ -281,3 +281,4 @@ function calcularData() {
 }
 
 exports.calculaCoeficient = calculaCoeficient; 
+exports.calcularData = calcularData; 

@@ -33,12 +33,12 @@ exports.init = (req, res) => {
     httpResponse(req, res, 400, 'KO', 'Comunitat no vinculada. Falta idComunitat o nomComunitat');
   }
 }
-// {"hashtag":"abcd",
-// "idComunitat":"1",
+// {"idComunitat":"1",
 // "nomComunitat":"Cornella del Terri"}
 
 // Vinculació dades del servidor extern
 exports.update = (req, res) => {
+  data = exportedC.calcularData();
   var { users, idComunitat } = req.body;
   console.log(req.headers);
   console.log(req.headers.authorization);
@@ -54,10 +54,10 @@ exports.update = (req, res) => {
             for (let i = 0; i < users.length; i++) {
               coeficient = users[i].coeficient;
               coeficient = coeficient.replace(",", ".");
-              stmt.run(users[i].idUsuari, users[i].dataAlta, users[i].dataActualitzacio, users[i].nom, users[i].cognoms, users[i].email, users[i].telefon, coeficient, users[i].estat, users[i].vinculat, users[i].comentaris);
+              stmt.run(users[i].idUsuari, users[i].dataAlta, data, users[i].nom, users[i].cognoms, users[i].email, users[i].telefon, coeficient, users[i].estat, users[i].vinculat, users[i].comentaris);
             }
             stmt.finalize();
-            checkCoeficients();
+            checkCoeficients(data);
             if (!err) {
               httpResponse(req, res, 200, 'OK', 'Usuaris actualitzats');
             } else {
@@ -172,7 +172,7 @@ function deleteTable(table) {
 }
 
 // Comprovar si s'ha d'actualitzar la taula de coeficients
-function checkCoeficients() {
+function checkCoeficients(data) {
   let found = false;
   // Sqlite connexió 
   conn.all('SELECT * FROM usuari', (err, rows) => {
@@ -191,7 +191,7 @@ function checkCoeficients() {
           }
         });
         if (found == false) {
-          conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris, estat) VALUES (?,?,?,?,?)', [row.idUsuari, row.coeficient, row.data, row.comentaris, row.estat], (err, rows4) => {
+          conn.all('INSERT INTO coeficient(idUsuari, coeficient, data, comentaris, estat) VALUES (?,?,?,?,?)', [row.idUsuari, row.coeficient, data, row.comentaris, row.estat], (err, rows4) => {
             if (err) {
               console.log(err);
             }
