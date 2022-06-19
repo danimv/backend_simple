@@ -43,7 +43,7 @@ exports.update = (req, res) => {
   console.log(req.headers);
   console.log(req.headers.authorization);
   token = req.headers.authorization;
-  if (idComunitat && users[0] && users[0].idUsuari && users[0].coeficient && users[0].vinculat) {
+  if (idComunitat && users[0] && users[0].idUsuari) {// && users[0].coeficient && users[0].vinculat) {
     conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
       if (!err) {
         if (rows[0].idComunitat == idComunitat) {//} && rows[0].hashtag == hashtag) {
@@ -78,9 +78,9 @@ exports.update = (req, res) => {
 }
 // { "idComunitat":"1",
 //   "users":[
-//   {"idUsuari":"1011","nom":"A", "cognoms":"M", "telefon":"628611940", "coeficient":"0,755", "estat":"0", "vinculat":"0"},
-//    {"idUsuari":"1012","nom":"T", "cognoms":"C", "telefon":"64343423", "coeficient":"0.98","estat":"1","vinculat":"0"},
-//    {"idUsuari":"1014","nom":"J", "cognoms":"O", "telefon":"984432234", "coeficient":"0,33","estat":"1","vinculat":"0"}
+//   {"idUsuari":"1001","nom":"A", "cognoms":"M", "telefon":"628611940", "coeficient":"0,755", "estat":"1", "vinculat":"1"},
+//    {"idUsuari":"1002","nom":"T", "cognoms":"C", "telefon":"64343423", "coeficient":"0.98","estat":"1","vinculat":"0"},
+//    {"idUsuari":"1003","nom":"J", "cognoms":"O", "telefon":"984432234", "coeficient":"0,33","estat":"1","vinculat":"0"}
 //  ]
 //  }
 
