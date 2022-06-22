@@ -46,7 +46,7 @@ exports.update = (req, res) => {
   if (idComunitat && users[0] && users[0].idUsuari) {// && users[0].coeficient && users[0].vinculat) {
     conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
       if (!err) {
-        if (rows[0].idComunitat == idComunitat) {//} && rows[0].hashtag == hashtag) {
+        if (rows[0] && rows[0].idComunitat == idComunitat) {//} && rows[0].hashtag == hashtag) {
           backupDb();
           deleteTable('usuari');
           conn.serialize(function (err, rows) {
