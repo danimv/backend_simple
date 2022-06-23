@@ -201,7 +201,7 @@ exports.viewall = (req, res) => {
   // Select Sqlite
   conn.all('SELECT * FROM usuari WHERE idUsuari = ?', [req.params.idUsuari], (err, rows) => {
     if (!err) {
-      conn.all('SELECT * FROM coeficient WHERE idUsuari = ?', [req.params.idUsuari], (err, rows2) => {
+      conn.all('SELECT * FROM coeficient WHERE idUsuari = ? ORDER BY data ASC', [req.params.idUsuari], (err, rows2) => {
         if (!err) {
           calculaCoeficient(function getCoeficient(result) {
             alert2 = result[1];
