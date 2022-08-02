@@ -84,70 +84,70 @@ exports.update = (req, res) => {
 //  ]
 //  }
 
-// Usuari vinculat a la app
-exports.startUser = (req, res) => {
-  var { idUsuari, idComunitat } = req.body;
-  console.log(req.headers);
-  console.log(req.headers.authorization);
-  token = req.headers.authorization;
-  if (idComunitat && idUsuari) {
-    conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
-      if (!err) {
-        if (rows[0].idComunitat == idComunitat) {//} && rows[0].hashtag == hashtag) {
-          // Sqlite connexió   
-          conn.all('UPDATE usuari SET vinculat = ? WHERE idUsuari = ?', ["1", idUsuari], (err, rows) => {
-            if (!err) {
-              httpResponse(req, res, 200, 'OK', 'Usuari vinculat');
-            } else {
-              httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. Error base de dades: ' + err);
-              console.log(err);
-            }
-          });
-        } else {
-          httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. No coincideix idComunitat');
-        }
-      } else {
-        httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. Error base de dades: ' + err);
-      }
-    });
-  } else {
-    httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. Falta idComunitat o idUsuari');
-  }
-}
+// // Usuari vinculat a la app
+// exports.startUser = (req, res) => {
+//   var { idUsuari, idComunitat } = req.body;
+//   console.log(req.headers);
+//   console.log(req.headers.authorization);
+//   token = req.headers.authorization;
+//   if (idComunitat && idUsuari) {
+//     conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
+//       if (!err) {
+//         if (rows[0].idComunitat == idComunitat) {//} && rows[0].hashtag == hashtag) {
+//           // Sqlite connexió   
+//           conn.all('UPDATE usuari SET vinculat = ? WHERE idUsuari = ?', ["1", idUsuari], (err, rows) => {
+//             if (!err) {
+//               httpResponse(req, res, 200, 'OK', 'Usuari vinculat');
+//             } else {
+//               httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. Error base de dades: ' + err);
+//               console.log(err);
+//             }
+//           });
+//         } else {
+//           httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. No coincideix idComunitat');
+//         }
+//       } else {
+//         httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. Error base de dades: ' + err);
+//       }
+//     });
+//   } else {
+//     httpResponse(req, res, 400, 'KO', 'Usuari no vinculat. Falta idComunitat o idUsuari');
+//   }
+// }
 
-// Sincronitzar usuaris amb servidor extern
-exports.sync = (req, res) => {
-  conn.all('SELECT * FROM usuari WHERE idUsuari > 2000 ORDER BY idUsuari ASC', (err, rows) => {
-    if (!err) {
-      // console.log(rows);
-      var postData = rows.map((sqliteObj, index) => {
-        return Object.assign({}, sqliteObj);
-      });
-      // console.log(postData);
-      httpRequest(postData, 'httpbin.org', '/post', 'POST', function getResponse(responseBody) {
-        console.log(responseBody.statusCode);
-        console.log(responseBody);
-        conn.all('UPDATE comunitat SET sync =? WHERE id = (SELECT max(id) FROM comunitat)', [0], (err, rows) => {
-          if (!err) {
-            let alert = req.query.alert;
-            let alert3 = 'Usuaris sincronitzats correctament amb el servidor extern';
-            exportedC.calculaCoeficient(function getCoeficient(result) {
-              alert2 = result[1];
-              cT = result[0];
-              res.redirect('/usuaris/?alert3=' + `Usuaris sincronitzats correctament amb el servidor extern`);
-            });
-          } else {
-            console.log(err);
-          }
-        });
-      });
-    } else {
-      alert1 = 'No es pot sincronitzar amb el servidor extern"';
-      res.render('usuaris', { alert1 });
-      console.log(err);
-    }
-  });
-}
+// // Sincronitzar usuaris amb servidor extern
+// exports.sync = (req, res) => {
+//   conn.all('SELECT * FROM usuari WHERE idUsuari > 2000 ORDER BY idUsuari ASC', (err, rows) => {
+//     if (!err) {
+//       // console.log(rows);
+//       var postData = rows.map((sqliteObj, index) => {
+//         return Object.assign({}, sqliteObj);
+//       });
+//       // console.log(postData);
+//       httpRequest(postData, 'httpbin.org', '/post', 'POST', function getResponse(responseBody) {
+//         console.log(responseBody.statusCode);
+//         console.log(responseBody);
+//         conn.all('UPDATE comunitat SET sync =? WHERE id = (SELECT max(id) FROM comunitat)', [0], (err, rows) => {
+//           if (!err) {
+//             let alert = req.query.alert;
+//             let alert3 = 'Usuaris sincronitzats correctament amb el servidor extern';
+//             exportedC.calculaCoeficient(function getCoeficient(result) {
+//               alert2 = result[1];
+//               cT = result[0];
+//               res.redirect('/usuaris/?alert3=' + `Usuaris sincronitzats correctament amb el servidor extern`);
+//             });
+//           } else {
+//             console.log(err);
+//           }
+//         });
+//       });
+//     } else {
+//       alert1 = 'No es pot sincronitzar amb el servidor extern"';
+//       res.render('usuaris', { alert1 });
+//       console.log(err);
+//     }
+//   });
+// }
 
 //Funcio backup db
 function backupDb() {

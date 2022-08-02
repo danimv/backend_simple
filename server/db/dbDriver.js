@@ -1,7 +1,7 @@
 let sqlite3 = require('sqlite3').verbose(); //'server/controllers/comunitat.db';//
 const fs = require('fs');                   //'server/controllers/comunitat_backup.db';//
 const { nextTick } = require('process');
-const location = process.env.SQLITE_DB_LOCATION || 'home/root/db_app/comunitat.db';
+const location = process.env.SQLITE_DB_LOCATION || 'server/controllers/comunitat.db';// 'home/root/db_app/comunitat.db';
 const locationBackup = process.env.SQLITE_DB_LOCATION || 'home/root/db_app/comunitat_backup.db';
 const dirName = require('path').dirname(location);
 if (!fs.existsSync(dirName)) {

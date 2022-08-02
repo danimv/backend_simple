@@ -10,7 +10,7 @@
     integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
-  <link href="css/main.css" rel="stylesheet">      
+  <link href="css/main.css" rel="stylesheet">
 </head>
 
 <body>
@@ -20,24 +20,29 @@
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
-      </button>             
+      </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent" role="alert">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">                    
-          <li class="nav-item" style="padding-right: 10%;">            
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item" style="padding-right: 10%;">
             <a class="nav-link active" style="font-size: 140%;" aria-current="page" href="/comunitat">Comunitat</a>
           </li>
           <li class="nav-item" style="padding-right: 10%;">
-            <a class="nav-link active" style="font-size: 140%;" aria-current="page" href="/usuaris">Usuaris</a>            
+            <a class="nav-link active" style="font-size: 140%;" aria-current="page" href="/usuaris">Usuaris</a>
           </li>
-          <li class="nav-item" >            
+          <li class="nav-item">
             <a class="nav-link active" style="font-size: 140%;" aria-current="page" href="/logout">Logout</a>
-          </li>          
+          </li>
+        </ul>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+           <button type="button" class="btn btn-success" id="workingMode" href="/api/mode">ONLINE</button>
+          </li>
         </ul>
         <form class="d-flex" method="POST" action="/usuaris" novalidate>
           <input class="form-control me-2" type="search" placeholder="" name="search" aria-label="Search">
           <button class="btn btn-outline-light" type="submit">Buscar</button>
         </form>
-      </div>      
+      </div>
     </div>
   </nav>
 
@@ -68,4 +73,5 @@
     integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
     crossorigin="anonymous"></script>
 </body>
+
 </html>

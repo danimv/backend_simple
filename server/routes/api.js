@@ -12,13 +12,16 @@ rutesApi.post('/update', function (req, res, next) {
     next();
 },apiController.update);
 
-rutesApi.post('/init_user', function (req, res, next) {  
-    next();
-},apiController.startUser);
+// rutesApi.post('/init_user', function (req, res, next) {  
+//     next();
+// },apiController.startUser);
 
-rutesApi.get('/sync', function (req, res, next) {  
-    next();
-},apiController.sync);
+// rutesApi.get('/sync', function (req, res, next) {  
+//     next();
+// },apiController.sync);
 
+rutesApi.post('/mode', function (req, res, next) {   
+    next();
+},apiController.update);
 
 module.exports = rutesApi;
