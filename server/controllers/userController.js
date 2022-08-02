@@ -7,12 +7,12 @@ let conn = exportedD.dbConnection();
 
 // Vista usuaris
 exports.view = (req, res) => {
-  let alert2 = false; 
+  let alert2 = false;
   exportedC.checkFileExists(location, function check(error) {
     if (!error) {
       // Sqlite connexió 
       conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows1) => {
-        if (!err && sync[0]) {
+        if (!err && rows1[0]) {
           conn.all('SELECT * FROM usuari ORDER BY idUsuari ASC', (err, rows2) => {
             // Si no hi ha error 
             if (!err && rows2[0]) {
@@ -23,6 +23,9 @@ exports.view = (req, res) => {
                 cT = result[0];
                 syncAlert = rows1[0].sync;
                 mode = rows1[0].mode;
+                if (mode == 0) {
+                  syncAlert = 0;
+                }
                 res.render('usuaris', { rows2, alert, alert2, alert3, cT, syncAlert, mode });
               });
             } else {
@@ -201,23 +204,27 @@ exports.delete = (req, res) => {
 exports.viewall = (req, res) => {
   // Select Sqlite
   conn.all('SELECT * FROM usuari WHERE idUsuari = ?', [req.params.idUsuari], (err, rows) => {
-    if (!err) {
-      conn.all('SELECT * FROM coeficient WHERE idUsuari = ? ORDER BY data ASC', [req.params.idUsuari], (err, rows2) => {
-        if (!err) {
-          calculaCoeficient(function getCoeficient(result) {
-            alert2 = result[1];
-            cT = result[0];
-            res.render('view-user', { rows, rows2, alert2, cT });
-          });
-        } else {
-          console.log(err);
-        }
-        console.log('Dades de l`usuari');
-      });
-    } else {
-      console.log(err);
-    }
-    console.log('Dades de l`usuari');
+    conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows1) => {
+      if (!err) {
+        conn.all('SELECT * FROM coeficient WHERE idUsuari = ? ORDER BY data ASC', [req.params.idUsuari], (err, rows2) => {
+          if (!err) {
+            calculaCoeficient(function getCoeficient(result) {
+              alert2 = result[1];
+              cT = result[0];
+              mode = rows1[0].mode;
+              res.render('view-user', { rows, rows2, alert2, cT , mode});
+            });
+          } else {
+            console.log(err);
+          }
+          console.log('Dades de l`usuari');
+        });
+
+      } else {
+        console.log(err);
+      }
+      console.log('Dades de l`usuari');
+    });
   });
 }
 
@@ -281,5 +288,5 @@ function calcularData() {
   return data2;
 }
 
-exports.calculaCoeficient = calculaCoeficient; 
+exports.calculaCoeficient = calculaCoeficient;
 exports.calcularData = calcularData; 

@@ -43,11 +43,13 @@
             <td>{{this.vinculat}}</td>
             <td>{{this.comentaris}}</td>
             <td style="width: 18%" ; class="text-end">
+              {{#if ../mode}}
               <a href="/usuaris/edituser/{{this.idUsuari}}" type="button" class="btn btn-light btn-small"><i
                   class="bi bi-pencil"></i>
                 Edita</a>
               <a type="button" class="btn btn-light btn-small"><i class="bi bi-person-x"></i>
                 Elimina</a>
+              {{/if}}
             </td>
           </tr>
         </tbody>
@@ -55,28 +57,28 @@
     </div>
   </div>
   {{/each}}
-  
-   <div class="table-responsive">
-  <table class="table table-bordered" style="font-size:medium;margin-top:1%">
-    <thead class="thead-dark">
-      <tr>
-        <th style="width: 25%;" scope="col">Data modificació</th>
-        <th style="width: 25%;" scope="col">Coeficient assignat</th>
-        <th style="width: 25%;" scope="col">Estat</th>
-        <th style="width: 25%;" scope="col">Comentaris</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each rows2}}
-      <tr>
-        <td scope="row">{{this.data}}</th>
-        <td>{{this.coeficient}}</td>
-        <td scope="row">{{this.estat}}</th>
-        <td scope="row">{{this.comentaris}}</th>
-      </tr>
-      {{/each}}
 
-    </tbody>
-  </table>
+  <div class="table-responsive">
+    <table class="table table-bordered" style="font-size:medium;margin-top:1%">
+      <thead class="thead-dark">
+        <tr>
+          <th style="width: 25%;" scope="col">Data modificació</th>
+          <th style="width: 25%;" scope="col">Coeficient assignat</th>
+          <th style="width: 25%;" scope="col">Estat</th>
+          <th style="width: 25%;" scope="col">Comentaris</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each rows2}}
+        <tr>
+          <td scope="row">{{this.data}}</th>
+          <td>{{this.coeficient}}</td>
+          <td scope="row">{{this.estat}}</th>
+          <td scope="row">{{this.comentaris}}</th>
+        </tr>
+        {{/each}}
+
+      </tbody>
+    </table>
   </div>
 </div>

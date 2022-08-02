@@ -18,15 +18,11 @@
     {{/each}}
   </div>
   <div class="d-grid gap-4 col-12 mx-auto" style="text-align:center ;color:rgb(9, 120, 231);padding-top: 1%;">
-    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-      <li class="nav-item">
-        {{#if mode}}
-        <a role="button" class="btn btn-success" id="workingMode" href="/api/mode">ONLINE</a>
-        {{else}}
-        <a role="button" class="btn btn-warning" id="workingMode" href="/api/mode">OFFLINE</a>
-        {{/if}}
-      </li>
-    </ul>
+    {{#if mode}}
+    <a style="font-size: 150%;" role="button" class="btn btn-warning" id="workingMode" href="/comunitat/mode">OFFLINE</a>
+    {{else}}
+    <a style="font-size: 150%;" role="button" class="btn btn-success" id="workingMode" href="/comunitat/mode">ONLINE</a>
+    {{/if}}
     <a style="font-size: 150%;" type="link" role="button" class="btn btn-outline-primary"
       href="/comunitat/interrupcions">Interrupcions de servei</a>
     {{!-- <a style="font-size: 150%;" type="link" role="button" class="btn btn-outline-primary"

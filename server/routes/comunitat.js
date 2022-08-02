@@ -18,6 +18,10 @@ rutesComunitat.get('/', function (req, res, next) {
 //     next();
 // }, comunitatController.crearBd);
 
+rutesComunitat.get('/mode', function (req, res, next) {   
+    next();
+},comunitatController.mode);
+
 rutesComunitat.get('/interrupcions', function (req, res, next) {
     req.app.locals.layout = 'main';
     next();

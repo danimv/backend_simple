@@ -32,6 +32,26 @@ exports.interrupcions = (req, res) => {
   res.render('interrupcions');
 }
 
+// Canviar de mode online o offline --> 0=ONLINE, 1=OFFLINE
+exports.mode = (req, res) => {
+  let mode;  
+  // Sqlite connexió 
+  conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, row) => {
+    if (err || row[0].mode == null) {
+      mode = 1;
+    } else {
+      mode = row[0].mode + 1;
+      if (mode > 1) mode = 0;
+    }
+    conn.all('UPDATE comunitat SET mode = ? WHERE id = ?', [mode, row[0].id], (err, rows4) => {
+    });    
+    console.log(mode);
+    res.redirect('/comunitat/?mode=' + `${mode}`);              
+    // res.render('comunitat', { mode });
+  });  
+  // res.redirect(req.get('referer'));
+}
+
 function crearBd() {
   conn.all(
     'CREATE TABLE IF NOT EXISTS usuari (idUsuari INTEGER, dataAlta TEXT, dataActualitzacio TEXT, nom TEXT, cognoms TEXT, email TEXT, telefon INTEGER, coeficient INTEGER, estat INTEGER, vinculat INTEGER, comentaris TEXT, PRIMARY KEY("idUsuari" AUTOINCREMENT))',
