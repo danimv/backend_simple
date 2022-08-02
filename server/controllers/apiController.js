@@ -48,27 +48,31 @@ exports.update = (req, res) => {
   if (idComunitat && users[0] && users[0].idUsuari) {// && users[0].coeficient && users[0].vinculat) {
     conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
       if (!err) {
-        if (rows[0] && rows[0].idComunitat == idComunitat) {//} && rows[0].hashtag == hashtag) {
-          backupDb();
-          deleteTable('usuari');
-          conn.serialize(function (err, rows) {
-            let stmt = conn.prepare('INSERT INTO usuari(idUsuari,dataAlta, dataActualitzacio, nom, cognoms, email, telefon, coeficient, estat, vinculat, comentaris) VALUES(?,?,?,?,?,?,?,?,?,?,?)');
-            for (let i = 0; i < users.length; i++) {
-              coeficient = users[i].coeficient;
-              coeficient = coeficient.replace(",", ".");
-              stmt.run(users[i].idUsuari, users[i].dataAlta, data, users[i].nom, users[i].cognoms, users[i].email, users[i].telefon, coeficient, users[i].estat, users[i].vinculat, users[i].comentaris);
-            }
-            stmt.finalize();
-            checkCoeficients(data);
-            if (!err) {
-              httpResponse(req, res, 200, 'OK', 'Usuaris actualitzats');
-            } else {
-              httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Error base de dades ' + err);
-              console.log(err);
-            }
-          });
+        if (rows[0].mode == 0) {
+          if (rows[0] && rows[0].idComunitat == idComunitat) {//} && rows[0].hashtag == hashtag) {
+            backupDb();
+            deleteTable('usuari');
+            conn.serialize(function (err, rows) {
+              let stmt = conn.prepare('INSERT INTO usuari(idUsuari,dataAlta, dataActualitzacio, nom, cognoms, email, telefon, coeficient, estat, vinculat, comentaris) VALUES(?,?,?,?,?,?,?,?,?,?,?)');
+              for (let i = 0; i < users.length; i++) {
+                coeficient = users[i].coeficient;
+                coeficient = coeficient.replace(",", ".");
+                stmt.run(users[i].idUsuari, users[i].dataAlta, data, users[i].nom, users[i].cognoms, users[i].email, users[i].telefon, coeficient, users[i].estat, users[i].vinculat, users[i].comentaris);
+              }
+              stmt.finalize();
+              checkCoeficients(data);
+              if (!err) {
+                httpResponse(req, res, 200, 'OK', 'Usuaris actualitzats');
+              } else {
+                httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Error base de dades ' + err);
+                console.log(err);
+              }
+            });
+          } else {
+            httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. No coincideixen idComunitat');
+          }
         } else {
-          httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. No coincideixen idComunitat');
+          httpResponse(req, res, 400, 'KO', 'Mode Offline, no és possible actualitzar dades ' + err);
         }
       } else {
         httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Error base de dades: ' + err);
