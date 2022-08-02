@@ -156,17 +156,16 @@ exports.mode = (req, res) => {
   let mode;
   // Sqlite connexió 
   conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, row) => {
-    if (!err || row[0].mode == null) {
+    if (err || row[0].mode == null) {
       mode = 1;
     } else {
       mode = row[0].mode + 1;
       if (mode > 1) mode = 0;
     }
-    console.log(mode);
     conn.all('UPDATE comunitat SET mode = ? WHERE id = ?', [mode, row[0].id], (err, rows4) => {
     });
   });
-  res.render('usuaris', {mode});
+  res.redirect(req.get('referer'));
 }
 
 
