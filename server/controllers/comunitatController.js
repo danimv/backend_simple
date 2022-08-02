@@ -13,7 +13,8 @@ exports.view = (req, res) => {
       // Sqlite connexió 
       conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
         if (!err) {
-          res.render('comunitat', { rows });
+          mode = rows[0].mode;
+          res.render('comunitat', { rows, mode });
         } else {
           res.render('comunitat');
           console.log(err);
@@ -31,31 +32,31 @@ exports.interrupcions = (req, res) => {
   res.render('interrupcions');
 }
 
-function crearBd() {  
-    conn.all(
-      'CREATE TABLE IF NOT EXISTS usuari (idUsuari INTEGER, dataAlta TEXT, dataActualitzacio TEXT, nom TEXT, cognoms TEXT, email TEXT, telefon INTEGER, coeficient INTEGER, estat INTEGER, vinculat INTEGER, comentaris TEXT, PRIMARY KEY("idUsuari" AUTOINCREMENT))',
-      (err, result) => {
-        if (!err) {
-          conn.all(
-            'CREATE TABLE IF NOT EXISTS coeficient (idCoeficient INTEGER, idUsuari INTEGER, data TEXT, coeficient INTEGER, estat INTEGER, comentaris TEXT, PRIMARY KEY("idCoeficient" AUTOINCREMENT))',
-            (err, result2) => {
-              if (!err) {
-                conn.all(
-                  'CREATE TABLE IF NOT EXISTS comunitat (id INTEGER, idComunitat INTEGER, nomComunitat TEXT, comentaris TEXT, sync INTEGER, mode INTEGER, PRIMARY KEY("id" AUTOINCREMENT))',
-                  (err, result3) => {
-                    if (!err) {
-                      console.log("Taules revisades");
-                    }
-                  });
-              } else {
-                console.log(err);
-              }
-            });
-        } else {
-          console.log(err);
-        }
-      },
-    );  
+function crearBd() {
+  conn.all(
+    'CREATE TABLE IF NOT EXISTS usuari (idUsuari INTEGER, dataAlta TEXT, dataActualitzacio TEXT, nom TEXT, cognoms TEXT, email TEXT, telefon INTEGER, coeficient INTEGER, estat INTEGER, vinculat INTEGER, comentaris TEXT, PRIMARY KEY("idUsuari" AUTOINCREMENT))',
+    (err, result) => {
+      if (!err) {
+        conn.all(
+          'CREATE TABLE IF NOT EXISTS coeficient (idCoeficient INTEGER, idUsuari INTEGER, data TEXT, coeficient INTEGER, estat INTEGER, comentaris TEXT, PRIMARY KEY("idCoeficient" AUTOINCREMENT))',
+          (err, result2) => {
+            if (!err) {
+              conn.all(
+                'CREATE TABLE IF NOT EXISTS comunitat (id INTEGER, idComunitat INTEGER, nomComunitat TEXT, comentaris TEXT, sync INTEGER, mode INTEGER, PRIMARY KEY("id" AUTOINCREMENT))',
+                (err, result3) => {
+                  if (!err) {
+                    console.log("Taules revisades");
+                  }
+                });
+            } else {
+              console.log(err);
+            }
+          });
+      } else {
+        console.log(err);
+      }
+    },
+  );
 }
 
 function checkFileExists(filepath, callback) {

@@ -8,6 +8,8 @@ const exportedD = require('../db/dbDriver');
 const location = exportedD.dbLocation();
 const locationBackup = exportedD.dbLocationBackup();
 let conn = exportedD.dbConnection();
+var LocalStorage = require('node-localstorage').LocalStorage;
+localStorage = new LocalStorage('./scratch');
 
 // Vinculació comunitat amb servidor extern
 exports.init = (req, res) => {
@@ -150,10 +152,10 @@ exports.update = (req, res) => {
 // }
 
 
-// Vinculació comunitat amb servidor extern
+// Canviar de mode online o offline
 exports.mode = (req, res) => {
-  console.log("mode");
   let mode;
+  global.workingMode=null;
   // Sqlite connexió 
   conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, row) => {
     if (err || row[0].mode == null) {
@@ -163,9 +165,12 @@ exports.mode = (req, res) => {
       if (mode > 1) mode = 0;
     }
     conn.all('UPDATE comunitat SET mode = ? WHERE id = ?', [mode, row[0].id], (err, rows4) => {
-    });
-  });
-  res.redirect(req.get('referer'));
+    });    
+    console.log(mode);
+    res.redirect('/comunitat/?mode=' + `${mode}`);              
+    // res.render('comunitat', { mode });
+  });  
+  // res.redirect(req.get('referer'));
 }
 
 

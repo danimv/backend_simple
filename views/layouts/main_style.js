@@ -5,7 +5,7 @@ const exportedD = require('../db/dbDriver');
 const location = exportedD.dbLocation();
 let conn = exportedD.dbConnection();
 
-
+console.log("main_style");
 const btn = document.getElementById('workingMode');
 
 btn.addEventListener('click', function onClick() {

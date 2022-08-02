@@ -11,18 +11,19 @@ exports.view = (req, res) => {
   exportedC.checkFileExists(location, function check(error) {
     if (!error) {
       // Sqlite connexió 
-      conn.all('SELECT sync FROM comunitat ORDER BY id DESC LIMIT 1', (err, sync) => {
+      conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows1) => {
         if (!err && sync[0]) {
-          conn.all('SELECT * FROM usuari ORDER BY idUsuari ASC', (err, rows) => {
+          conn.all('SELECT * FROM usuari ORDER BY idUsuari ASC', (err, rows2) => {
             // Si no hi ha error 
-            if (!err && rows[0]) {
+            if (!err && rows2[0]) {
               let alert = req.query.alert;
               let alert3 = req.query.alert3;
               calculaCoeficient(function getCoeficient(result) {
                 alert2 = result[1];
                 cT = result[0];
-                syncAlert = sync[0].sync;
-                res.render('usuaris', { rows, alert, alert2, alert3, cT, syncAlert });
+                syncAlert = rows1[0].sync;
+                mode = rows1[0].mode;
+                res.render('usuaris', { rows2, alert, alert2, alert3, cT, syncAlert, mode });
               });
             } else {
               alert2 = 'No es pot accedir a la base de dades';
