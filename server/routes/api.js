@@ -20,8 +20,8 @@ rutesApi.post('/update', function (req, res, next) {
 //     next();
 // },apiController.sync);
 
-rutesApi.post('/mode', function (req, res, next) {   
+rutesApi.get('/mode', function (req, res, next) {   
     next();
-},apiController.update);
+},apiController.mode);
 
 module.exports = rutesApi;

@@ -149,6 +149,27 @@ exports.update = (req, res) => {
 //   });
 // }
 
+
+// Vinculació comunitat amb servidor extern
+exports.mode = (req, res) => {
+  console.log("mode");
+  let mode;
+  // Sqlite connexió 
+  conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, row) => {
+    if (!err || row[0].mode == null) {
+      mode = 1;
+    } else {
+      mode = row[0].mode + 1;
+      if (mode > 1) mode = 0;
+    }
+    console.log(mode);
+    conn.all('UPDATE comunitat SET mode = ? WHERE id = ?', [mode, row[0].id], (err, rows4) => {
+    });
+  });
+  res.render('usuaris', {mode});
+}
+
+
 //Funcio backup db
 function backupDb() {
   // File destination.txt will be created or overwritten by default.
@@ -187,7 +208,7 @@ function checkCoeficients(data) {
               // });
               found = true;
             }
-            
+
           }
         });
         if (found == false) {
