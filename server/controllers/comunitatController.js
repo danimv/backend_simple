@@ -12,7 +12,7 @@ exports.view = (req, res) => {
       crearBd();
       // Sqlite connexió 
       conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
-        if (!err) {
+        if (!err && rows[0]) {
           mode = rows[0].mode;
           res.render('comunitat', { rows, mode });
         } else {
