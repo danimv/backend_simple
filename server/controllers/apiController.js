@@ -18,16 +18,18 @@ exports.init = (req, res) => {
   // backupDb();
   // deleteTable('comunitat');
   // Sqlite connexió 
+  // exportedC.checkFileExists(location, function check(error) {
+  // if (!error) {
   conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
     if (!err) {
-      if (rows[0].mode == 0) {
+      if (rows.length == 0 || rows[0].mode == 0) {
         if (nomComunitat && idComunitat) {
           nomComunitat = nomComunitat.toUpperCase();
           conn.all('INSERT INTO comunitat(idComunitat, nomComunitat, comentaris, sync) VALUES (?,?,?,?)', [idComunitat, nomComunitat, comentaris, 1], (err, rows) => {
             if (!err) {
-              idUsuari = idComunitat * 1000;
-              conn.all('INSERT INTO usuari(idUsuari, nom, coeficient, estat) VALUES (?,?,?,?)', [idUsuari, "Administrador", 0, 0], (err, result1) => {
-              });
+              // idUsuari = idComunitat * 1000;
+              // conn.all('INSERT INTO usuari(idUsuari, nom, coeficient, estat) VALUES (?,?,?,?)', [idUsuari, "Administrador", 0, 0], (err, result1) => {
+              // });
               httpResponse(req, res, 200, 'OK', 'Comunitat vinculada');
             } else {
               httpResponse(req, res, 400, 'KO', 'Comunitat no vinculada. Error de base de dades: ' + err);
@@ -45,6 +47,11 @@ exports.init = (req, res) => {
       console.log(err);
     }
   });
+  //   } else {
+  //     httpResponse(req, res, 400, 'KO', 'Comunitat no vinculada. Error de base de dades: ' + err);
+  //     console.log(err);
+  //   }
+  // });
 }
 // {"idComunitat":"1",
 // "nomComunitat":"Cornella del Terri"}
@@ -56,43 +63,53 @@ exports.update = (req, res) => {
   console.log(req.headers);
   console.log(req.headers.authorization);
   token = req.headers.authorization;
+  // exportedC.checkFileExists(location, function check(error) {
+  // if (!error) {
   conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
     if (!err) {
-      if (rows[0].mode == 0) {
-        if (idComunitat && users[0] && users[0].idUsuari) {// && users[0].coeficient && users[0].vinculat) {
-          if (rows[0] && rows[0].idComunitat == idComunitat) {//} && rows[0].hashtag == hashtag) {
-            backupDb();
-            deleteTable('usuari');
-            conn.serialize(function (err, rows) {
-              let stmt = conn.prepare('INSERT INTO usuari(idUsuari,dataAlta, dataActualitzacio, nom, cognoms, email, telefon, coeficient, estat, vinculat, comentaris) VALUES(?,?,?,?,?,?,?,?,?,?,?)');
-              for (let i = 0; i < users.length; i++) {
-                coeficient = users[i].coeficient;
-                coeficient = coeficient.replace(",", ".");
-                stmt.run(users[i].idUsuari, users[i].dataAlta, data, users[i].nom, users[i].cognoms, users[i].email, users[i].telefon, coeficient, users[i].estat, users[i].vinculat, users[i].comentaris);
-              }
-              stmt.finalize();
-              checkCoeficients(data);
-              if (!err) {
-                httpResponse(req, res, 200, 'OK', 'Usuaris actualitzats');
-              } else {
-                httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Error base de dades ' + err);
-                console.log(err);
-              }
-            });
+      if (rows[0]) {
+        if (rows[0].mode == 0) {
+          if (idComunitat && users[0] && users[0].idUsuari) {// && users[0].coeficient && users[0].vinculat) {
+            if (rows[0] && rows[0].idComunitat == idComunitat) {//} && rows[0].hashtag == hashtag) {
+              backupDb();
+              deleteTable('usuari');
+              conn.serialize(function (err, rows) {
+                let stmt = conn.prepare('INSERT INTO usuari(idUsuari,dataAlta, dataActualitzacio, nom, cognoms, email, telefon, coeficient, estat, vinculat, comentaris) VALUES(?,?,?,?,?,?,?,?,?,?,?)');
+                for (let i = 0; i < users.length; i++) {
+                  coeficient = users[i].coeficient;
+                  coeficient = coeficient.replace(",", ".");
+                  stmt.run(users[i].idUsuari, users[i].dataAlta, data, users[i].nom, users[i].cognoms, users[i].email, users[i].telefon, coeficient, users[i].estat, users[i].vinculat, users[i].comentaris);
+                }
+                stmt.finalize();
+                checkCoeficients(data);
+                if (!err) {
+                  httpResponse(req, res, 200, 'OK', 'Usuaris actualitzats');
+                } else {
+                  httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Error base de dades ' + err);
+                  console.log(err);
+                }
+              });
+            } else {
+              httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. No coincideixen idComunitat');
+            }
           } else {
-            httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. No coincideixen idComunitat');
+            httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Falta idComunitat o usuaris');
           }
         } else {
-          httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Falta idComunitat o usuaris');
+          httpResponse(req, res, 400, 'KO', 'Mode Offline, no és possible actualitzar dades ');
         }
       } else {
-        httpResponse(req, res, 400, 'KO', 'Mode Offline, no és possible actualitzar dades ');
+        httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. La comunitat no està inicialitzada: ' + err);
       }
     } else {
       httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Error a la base de dades: ' + err);
     }
   });
-
+  //   } else {
+  //     httpResponse(req, res, 400, 'KO', 'Comunitat no vinculada. Error de base de dades: ' + err);
+  //     console.log(err);
+  //   }
+  // });
 }
 // { "idComunitat":"1",
 //   "users":[

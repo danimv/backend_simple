@@ -34,21 +34,25 @@ exports.interrupcions = (req, res) => {
 
 // Canviar de mode online o offline --> 0=ONLINE, 1=OFFLINE
 exports.mode = (req, res) => {
-  let mode;  
+  let mode;
   // Sqlite connexió 
   conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, row) => {
-    if (err || row[0].mode == null) {
-      mode = 1;
+    // console.log(row.length);
+    if (!err && row[0]) {
+      if (row[0].mode == null) {
+        mode = 1;
+      } else {
+        mode = row[0].mode + 1;
+        if (mode > 1) mode = 0;
+      }
+      conn.all('UPDATE comunitat SET mode = ? WHERE id = ?', [mode, row[0].id], (err, rows4) => {
+      });
+      res.redirect('/comunitat/?mode=' + `${mode}`);
     } else {
-      mode = row[0].mode + 1;
-      if (mode > 1) mode = 0;
+      res.redirect('/comunitat/?mode=' + `0`);
     }
-    conn.all('UPDATE comunitat SET mode = ? WHERE id = ?', [mode, row[0].id], (err, rows4) => {
-    });    
-    console.log(mode);
-    res.redirect('/comunitat/?mode=' + `${mode}`);              
     // res.render('comunitat', { mode });
-  });  
+  });
   // res.redirect(req.get('referer'));
 }
 
