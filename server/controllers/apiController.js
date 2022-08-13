@@ -15,6 +15,9 @@ localStorage = new LocalStorage('./scratch');
 exports.init = (req, res) => {
   var { idComunitat, nomComunitat, comentaris } = req.body;
   token = req.headers.authorization;
+  data = exportedC.calcularData();
+  message = "";
+  tipus="init";
   // backupDb();
   // deleteTable('comunitat');
   // Sqlite connexió 
@@ -25,27 +28,31 @@ exports.init = (req, res) => {
       if (rows.length == 0 || rows[0].mode == 0) {
         if (nomComunitat && idComunitat) {
           nomComunitat = nomComunitat.toUpperCase();
-          conn.all('INSERT INTO comunitat(idComunitat, nomComunitat, comentaris, sync) VALUES (?,?,?,?)', [idComunitat, nomComunitat, comentaris, 1], (err, rows) => {
+          conn.all('INSERT INTO comunitat(idComunitat, nomComunitat, comentaris, sync,mode) VALUES (?,?,?,?,?)', [idComunitat, nomComunitat, comentaris, 1, 0], (err, rows) => {
             if (!err) {
+
               // idUsuari = idComunitat * 1000;
               // conn.all('INSERT INTO usuari(idUsuari, nom, coeficient, estat) VALUES (?,?,?,?)', [idUsuari, "Administrador", 0, 0], (err, result1) => {
-              // });
-              httpResponse(req, res, 200, 'OK', 'Comunitat vinculada');
+              // });   
+              message = 'Comunitat vinculada';
+              httpResponse(req, res, 200, 'OK', message, writeMsg);
             } else {
-              httpResponse(req, res, 400, 'KO', 'Comunitat no vinculada. Error de base de dades: ' + err);
-              console.log(err);
+              message = 'Comunitat no vinculada. Error de base de dades: ' + err;
+              httpResponse(req, res, 400, 'KO', message, writeMsg);
             }
           });
         } else {
-          httpResponse(req, res, 400, 'KO', 'Comunitat no vinculada. Falta idComunitat o nomComunitat');
+          message = 'Comunitat no vinculada. Falta idComunitat o nomComunitat';
+          httpResponse(req, res, 400, 'KO', message, writeMsg);
         }
       } else {
-        httpResponse(req, res, 400, 'KO', 'Mode Offline, no és possible actualitzar dades ');
+        message = 'Mode Offline, no és possible actualitzar dades ';
+        httpResponse(req, res, 400, 'KO', message, writeMsg);
       }
     } else {
-      httpResponse(req, res, 400, 'KO', 'Comunitat no vinculada. Error de base de dades: ' + err);
-      console.log(err);
-    }
+      message = 'Comunitat no vinculada. Error de base de dades: ' + err;
+      httpResponse(req, res, 400, 'KO', message, writeMsg);
+    }    
   });
   //   } else {
   //     httpResponse(req, res, 400, 'KO', 'Comunitat no vinculada. Error de base de dades: ' + err);
@@ -59,6 +66,8 @@ exports.init = (req, res) => {
 // Vinculació dades del servidor extern
 exports.update = (req, res) => {
   data = exportedC.calcularData();
+  message = "";
+  tipus="update";
   var { users, idComunitat } = req.body;
   console.log(req.headers);
   console.log(req.headers.authorization);
@@ -82,33 +91,37 @@ exports.update = (req, res) => {
                 }
                 stmt.finalize();
                 checkCoeficients(data);
-                if (!err) {
-                  httpResponse(req, res, 200, 'OK', 'Usuaris actualitzats');
-                } else {
-                  httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Error base de dades ' + err);
+                if (!err) {                 
+                  message = 'Usuaris actualitzats';
+                  httpResponse(req, res, 200, 'OK', message, writeMsg);
+                } else {                  
+                  message = 'Usuaris no actualitzats. Error base de dades ' + err;
+                  httpResponse(req, res, 400, 'KO', message, writeMsg);
                   console.log(err);
                 }
               });
-            } else {
-              httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. No coincideixen idComunitat');
+            } else {              
+              message = 'Usuaris no actualitzats. No coincideixen idComunitat';
+              httpResponse(req, res, 400, 'KO', message, writeMsg);
             }
           } else {
-            httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Falta idComunitat o usuaris');
+            message = 'Usuaris no actualitzats. Falta idComunitat o usuaris';            
+            httpResponse(req, res, 400, 'KO', message, writeMsg);
           }
-        } else {
-          httpResponse(req, res, 400, 'KO', 'Mode Offline, no és possible actualitzar dades ');
+        } else {          
+          message = 'Mode Offline, no és possible actualitzar dades ';
+          httpResponse(req, res, 400, 'KO', message, writeMsg);
         }
-      } else {
-        httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. La comunitat no està inicialitzada: ' + err);
+      } else {        
+        message = 'Usuaris no actualitzats. La comunitat no està inicialitzada: ' + err;
+        httpResponse(req, res, 400, 'KO', message, writeMsg);
       }
-    } else {
-      httpResponse(req, res, 400, 'KO', 'Usuaris no actualitzats. Error a la base de dades: ' + err);
+    } else {      
+      message = 'Usuaris no actualitzats. Error a la base de dades: ' + err;
+      httpResponse(req, res, 400, 'KO', message, writeMsg);
     }
   });
-  //   } else {
-  //     httpResponse(req, res, 400, 'KO', 'Comunitat no vinculada. Error de base de dades: ' + err);
-  //     console.log(err);
-  //   }
+  // conn.all('INSERT INTO api (data, tipus, res) VALUES (?,?,?)', [data, "update", message], (err, rows) => {
   // });
 }
 // { "idComunitat":"1",
@@ -193,6 +206,12 @@ function backupDb() {
   });
 }
 
+//Function write api message
+function writeMsg() { 
+  conn.all('INSERT INTO api (data, tipus, res) VALUES (?,?,?)', [data, tipus, message], (err, rows) => {
+  });
+}
+
 //Esborrar usuaris de la taula
 function deleteTable(table) {
   // Sqlite connexió 
@@ -239,7 +258,7 @@ function checkCoeficients(data) {
 }
 
 // Resposta http
-function httpResponse(req, res, code, strResult, msg) {
+function httpResponse(req, res, code, strResult, msg, callback) {
   res.statusCode = code;
   res.setHeader('Content-Type', 'application/json');
   const body = {
@@ -254,6 +273,7 @@ function httpResponse(req, res, code, strResult, msg) {
   console.log(responseBody);
   res.write(JSON.stringify(responseBody));
   res.end();
+  callback(msg);
 }
 
 // HTTP request a servidor extern

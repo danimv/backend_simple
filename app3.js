@@ -5,7 +5,7 @@ const session = require('express-session');
 require('dotenv').config();
 let alert = require('alert');
 const app = express();
-const port = process.env.PORT || 5011;
+const port = process.env.PORT || 5010;
 
 // Parsing middleware
 // app.use(bodyParser.urlencoded({ extended: false }));
@@ -50,7 +50,7 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 
 app.use(session({
     secret: 'secret',
-    resave: true,
+    resave: false,
     saveUninitialized: false,
     cookie: {
         // Session expires after 1 min of inactivity.
@@ -62,37 +62,25 @@ app.get('/', (req, res) => {
     res.render('inici');
 });
 
-app.post('/auth', function (request, response) {
-    // Capture the input fields
-    let username = request.body.username;
-    let password = request.body.password;
-    if (username && password) {
-        // //Connexió a Sqlite
-        // let conn = new sqlite3.Database('server/controllers/comunitat.db', sqlite3.OPEN_READWRITE, (err) => {
-        //     if (err) {
-        //         console.error(err.message);
-        //     }
-        //     console.log('Connected to database.');
-        // });
-        // conn.all('SELECT * FROM credencial WHERE nomUsuari = ? AND contrasenya = ?', [username, password], function (error, results, fields) {
-        //     if (error) throw error;
-        //     if (results.length > 0) {
-        if (username == 'admin' && password == 'admin') {
-            request.session.loggedin = true;
-            request.session.username = username;
-            request.session.admin = true;
-            response.redirect('/comunitat');
-            // response.render('main');
-        } else {
-            response.redirect('/');
-            alert("USUARI O CONTRASENYA INCORRECTE");
-        }
-        response.end();
-        // });
-    } else {
-        response.send('Introdueix l`usuari i la contrasenya!');
-        response.end();
-    }
+var auth = function(req, res, next) {
+    if (req.session && req.session.user === "amy" && req.session.admin)
+      return next();
+    else
+      return res.sendStatus(401);
+  };
+
+app.post('/auth', function (req, res) {
+    if (!req.body.username || !req.body.password) {
+        res.send('login failed');    
+      } else if(req.body.username === "admin" || req.body.password === "admin") {
+        req.session.user = "admin";
+        req.session.admin = true;
+        res.send("login success!");
+      }
+});
+
+app.get('/usuaris', auth, function (req, res) {
+    res.send("You can only see this after you've logged in.");
 });
 
 //Logout
