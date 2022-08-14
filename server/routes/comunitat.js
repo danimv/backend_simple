@@ -1,6 +1,7 @@
 const express = require('express');
 const rutesComunitat = express.Router();
 const comunitatController = require('../controllers/comunitatController');
+const verify = require('./verifyToken');
 
 // Routes
 rutesComunitat.get('/', function (req, res, next) {

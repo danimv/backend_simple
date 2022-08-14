@@ -1,11 +1,13 @@
 const express = require('express');
 let sqlite3 = require('sqlite3').verbose();
+require('dotenv').config();
 const exphbs = require('express-handlebars');
 const session = require('express-session');
-require('dotenv').config();
+const jwt = require('jsonwebtoken');
 let alert = require('alert');
 const app = express();
-const port = process.env.PORT || 5010;
+const verify = require('./server/routes/verifyToken');
+const port = process.env.PORT || 5011;
 
 // Parsing middleware
 // app.use(bodyParser.urlencoded({ extended: false }));
@@ -33,11 +35,11 @@ app.use('/', rutesInici, function (req, res, next) {
     req.app.locals.layout = 'main_initial';
     next();
 });
-app.use('/comunitat', rutesComunitat, function (req, res, next) {
+app.use('/comunitat', verify, rutesComunitat, function (req, res, next) {
     req.app.locals.layout = 'main';
     next();
 });
-app.use('/usuaris', rutesUsuari, function (req, res, next) {
+app.use('/usuaris', verify, rutesUsuari, function (req, res, next) {
     req.app.locals.layout = 'main';
     next();
 });
@@ -48,19 +50,19 @@ app.use('/api', rutesApi, function (req, res, next) {
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
-app.use(session({
-    secret: 'secret',
-    resave: true,
-    saveUninitialized: false,
-    cookie: {
-        // Session expires after 1 min of inactivity.
-        expires: 60000
-    }
-}));
+// app.use(session({
+//     secret: 'secret',
+//     resave: true,
+//     saveUninitialized: false,
+//     cookie: {
+//         // Session expires after 1 min of inactivity.
+//         expires: 60000
+//     }
+// }));
 
-app.get('/', (req, res) => {
-    res.render('inici');
-});
+// app.get('/', (req, res) => {
+//     res.render('inici');
+// });
 
 app.post('/auth', function (request, response) {
     // Capture the input fields
@@ -77,16 +79,21 @@ app.post('/auth', function (request, response) {
         // conn.all('SELECT * FROM credencial WHERE nomUsuari = ? AND contrasenya = ?', [username, password], function (error, results, fields) {
         //     if (error) throw error;
         //     if (results.length > 0) {
-        if (username == 'admin' && password == 'admin') {
-            request.session.loggedin = true;
-            request.session.username = username;
-            request.session.admin = true;
-            response.redirect('/comunitat');
-            // response.render('main');
-        } else {
-            response.redirect('/');
-            alert("USUARI O CONTRASENYA INCORRECTE");
-        }
+        // if (username == 'admin' && password == 'admin') {
+        // request.session.loggedin = true;
+        // request.session.username = username;
+        // request.session.admin = true;
+
+        // const token = jwt.sign({ "_id": username }, process.env.TOKEN_SECRET);
+        process.env.TOKEN_SECRET = username;
+        // response.header('auth_token', token).send(token);
+        // response.redirect('/comunitat/?user=' + `${username}`);
+        response.redirect('/comunitat');
+        // response.render('main');
+        //} //else {
+        //     response.redirect('/');
+        //     alert("USUARI O CONTRASENYA INCORRECTE");
+        // }
         response.end();
         // });
     } else {
@@ -98,8 +105,9 @@ app.post('/auth', function (request, response) {
 //Logout
 app.get('/logout', function (req, res, next) {
     req.app.locals.layout = 'main_initial';
+    process.env.TOKEN_SECRET = "";
     next();
 }, function (req, res) {
-    req.session.destroy();
     res.redirect('/');
+   
 });
