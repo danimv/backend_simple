@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 let alert = require('alert');
 const app = express();
 const verify = require('./server/routes/verifyToken');
-const port = process.env.PORT || 5011;
+const port = process.env.PORT || 5010;
 
 // Parsing middleware
 // app.use(bodyParser.urlencoded({ extended: false }));
@@ -19,6 +19,29 @@ app.use(express.json()); // New
 
 // Static Files
 app.use(express.static(__dirname + '/public'));
+
+app.use(session({
+    secret: 'prosum',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        // Session expires. 60000=1min
+        expires: 300000
+    }
+}))
+
+// middleware to test if authenticated
+function isAuthenticated(request, res, next) {
+    try {
+        if (request.session.user) {
+            next();
+        } else {
+            res.status(400).send('Falta autenticació');
+        }
+    } catch (err) {
+        next('route');
+    }
+}
 
 // Templating Engine
 const handlebars = exphbs.create({ extname: '.hbs', defaultLayout: 'main_initial.hbs' });
@@ -35,11 +58,11 @@ app.use('/', rutesInici, function (req, res, next) {
     req.app.locals.layout = 'main_initial';
     next();
 });
-app.use('/comunitat', verify, rutesComunitat, function (req, res, next) {
+app.use('/comunitat', isAuthenticated, rutesComunitat, function (req, res, next) {
     req.app.locals.layout = 'main';
     next();
 });
-app.use('/usuaris', verify, rutesUsuari, function (req, res, next) {
+app.use('/usuaris', isAuthenticated, rutesUsuari, function (req, res, next) {
     req.app.locals.layout = 'main';
     next();
 });
@@ -49,20 +72,6 @@ app.use('/api', rutesApi, function (req, res, next) {
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
-
-// app.use(session({
-//     secret: 'secret',
-//     resave: true,
-//     saveUninitialized: false,
-//     cookie: {
-//         // Session expires after 1 min of inactivity.
-//         expires: 60000
-//     }
-// }));
-
-// app.get('/', (req, res) => {
-//     res.render('inici');
-// });
 
 app.post('/auth', function (request, response) {
     // Capture the input fields
@@ -78,24 +87,27 @@ app.post('/auth', function (request, response) {
         // });
         // conn.all('SELECT * FROM credencial WHERE nomUsuari = ? AND contrasenya = ?', [username, password], function (error, results, fields) {
         //     if (error) throw error;
-        //     if (results.length > 0) {
-        // if (username == 'admin' && password == 'admin') {
-        // request.session.loggedin = true;
-        // request.session.username = username;
-        // request.session.admin = true;
+        //     if (results.length > 0)
 
-        // const token = jwt.sign({ "_id": username }, process.env.TOKEN_SECRET);
-        process.env.TOKEN_SECRET = username;
-        // response.header('auth_token', token).send(token);
-        // response.redirect('/comunitat/?user=' + `${username}`);
-        response.redirect('/comunitat');
-        // response.render('main');
-        //} //else {
-        //     response.redirect('/');
-        //     alert("USUARI O CONTRASENYA INCORRECTE");
-        // }
-        response.end();
-        // });
+        request.session.regenerate(function (err) {
+            if (err) next(err)
+            if (username == 'admin' && password == 'admin') {
+                request.session.user = username;
+
+                // save the session before redirection
+                request.session.save(function (err) {
+                    if (err) return next(err)
+                    try {
+                        response.redirect('/comunitat');
+                    } catch (err) {
+                        next('route');
+                    }
+                })
+            } else {
+                response.redirect('/');
+                alert("USUARI O CONTRASENYA INCORRECTE");
+            }
+        })
     } else {
         response.send('Introdueix l`usuari i la contrasenya!');
         response.end();
@@ -105,9 +117,8 @@ app.post('/auth', function (request, response) {
 //Logout
 app.get('/logout', function (req, res, next) {
     req.app.locals.layout = 'main_initial';
-    process.env.TOKEN_SECRET = "";
     next();
 }, function (req, res) {
+    req.session.destroy();
     res.redirect('/');
-   
 });
