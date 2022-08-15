@@ -3,10 +3,8 @@ let sqlite3 = require('sqlite3').verbose();
 require('dotenv').config();
 const exphbs = require('express-handlebars');
 const session = require('express-session');
-const jwt = require('jsonwebtoken');
 let alert = require('alert');
 const app = express();
-const verify = require('./server/routes/verifyToken');
 const port = process.env.PORT || 5010;
 
 // Parsing middleware
@@ -19,6 +17,16 @@ app.use(express.json()); // New
 
 // Static Files
 app.use(express.static(__dirname + '/public'));
+
+// Templating Engine
+const handlebars = exphbs.create({ extname: '.hbs', defaultLayout: 'main_initial.hbs' });
+app.engine('.hbs', handlebars.engine);
+app.set('view engine', '.hbs');
+
+const rutesInici = require('./server/routes/inici');
+const rutesComunitat = require('./server/routes/comunitat');
+const rutesUsuari = require('./server/routes/usuaris');
+const rutesApi = require('./server/routes/api');
 
 app.use(session({
     secret: 'prosum',
@@ -42,16 +50,6 @@ function isAuthenticated(request, res, next) {
         next('route');
     }
 }
-
-// Templating Engine
-const handlebars = exphbs.create({ extname: '.hbs', defaultLayout: 'main_initial.hbs' });
-app.engine('.hbs', handlebars.engine);
-app.set('view engine', '.hbs');
-
-const rutesInici = require('./server/routes/inici');
-const rutesComunitat = require('./server/routes/comunitat');
-const rutesUsuari = require('./server/routes/usuaris');
-const rutesApi = require('./server/routes/api');
 
 // Recursos i rutes
 app.use('/', rutesInici, function (req, res, next) {
@@ -112,6 +110,10 @@ app.post('/auth', function (request, response) {
         response.send('Introdueix l`usuari i la contrasenya!');
         response.end();
     }
+});
+
+app.get('/', (req, res) => {
+    res.render('inici');
 });
 
 //Logout
