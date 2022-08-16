@@ -102,7 +102,6 @@ app.post('/auth', function (request, response) {
                     }
                 })
             } else {
-                // response.redirect('/');
                 var message=true;
                 // response.redirect(`/?message=${message}`);// + `${message}`);                
                 response.render('inici', {message});
