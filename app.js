@@ -89,7 +89,7 @@ app.post('/auth', function (request, response) {
 
         request.session.regenerate(function (err) {
             if (err) next(err)
-            if (username == 'admin' && password == 'admin') {
+            if (username == 'admin' && password == 'admin1234') {
                 request.session.user = username;
 
                 // save the session before redirection
@@ -102,8 +102,11 @@ app.post('/auth', function (request, response) {
                     }
                 })
             } else {
-                response.redirect('/');
-                alert("USUARI O CONTRASENYA INCORRECTE");
+                // response.redirect('/');
+                var message=true;
+                // response.redirect(`/?message=${message}`);// + `${message}`);                
+                response.render('inici', {message});
+                // alert("USUARI O CONTRASENYA INCORRECTE");
             }
         })
     } else {
