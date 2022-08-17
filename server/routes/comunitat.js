@@ -27,4 +27,9 @@ rutesComunitat.get('/interrupcions', function (req, res, next) {
     next();
 }, comunitatController.interrupcions);
 
+rutesComunitat.get('/actualitzacions', function (req, res, next) {
+    req.app.locals.layout = 'main';
+    next();
+}, comunitatController.actualitzacions);
+
 module.exports = rutesComunitat;

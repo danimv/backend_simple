@@ -50,22 +50,23 @@ exports.view = (req, res) => {
 exports.find = (req, res) => {
   let searchTerm = req.body.search;
   // Select Sqlite
-  conn.all('SELECT * FROM usuari WHERE nom LIKE ? OR cognoms LIKE ?', ['%' + searchTerm + '%', '%' + searchTerm + '%'], (err, rows) => {
-    if (!err && rows[0]) {
+  conn.all('SELECT * FROM usuari WHERE nom LIKE ? OR cognoms LIKE ?', ['%' + searchTerm + '%', '%' + searchTerm + '%'], (err, rows2) => {
+    if (!err) {
       calculaCoeficient(function getCoeficient(result) {
         alert2 = result[1];
         cT = result[0];
-        if (rows.length == 0) {
+        if (rows2.length == 0) {
           msg = 'No hi ha resultats per aquesta búsqueda: ';
         } else {
           msg = 'Es mostren els resultats de la búsqueda: ';
         }
-        res.render('usuaris', { rows, alert2, alert3: `${msg}` + `${searchTerm}` });
+        res.render('usuaris', { rows2, alert2, alert3: `${msg}` + `${searchTerm}` });
       });
     } else {
+      res.render('usuaris');
       console.log(err);
     }
-    console.log('Les dades de la búsqueda');
+    // console.log('Les dades de la búsqueda');
   });
 }
 
@@ -212,7 +213,7 @@ exports.viewall = (req, res) => {
               alert2 = result[1];
               cT = result[0];
               mode = rows1[0].mode;
-              res.render('view-user', { rows, rows2, alert2, cT , mode});
+              res.render('view-user', { rows, rows2, alert2, cT, mode });
             });
           } else {
             console.log(err);

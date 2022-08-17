@@ -34,7 +34,7 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         // Session expires. 60000=1min
-        expires: 300000
+        expires: 600000
     }
 }))
 
@@ -44,7 +44,8 @@ function isAuthenticated(request, res, next) {
         if (request.session.user) {
             next();
         } else {
-            res.status(400).send('Falta autenticació');
+            // res.status(400).send('Falta autenticació');
+            res.redirect('/');
         }
     } catch (err) {
         next('route');
@@ -102,9 +103,9 @@ app.post('/auth', function (request, response) {
                     }
                 })
             } else {
-                var message=true;
+                var message = true;
                 // response.redirect(`/?message=${message}`);// + `${message}`);                
-                response.render('inici', {message});
+                response.render('inici', { message });
                 // alert("USUARI O CONTRASENYA INCORRECTE");
             }
         })

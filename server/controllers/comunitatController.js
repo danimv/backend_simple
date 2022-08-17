@@ -25,11 +25,30 @@ exports.view = (req, res) => {
     }
   });
 }
-// exports.view2 = (req, res) => {
-//   res.render('config_comunitat');
-// }
+
+exports.actualitzacions = (req, res) => {
+  conn.all('SELECT * FROM api ORDER BY id DESC', (err, rows) => {
+    if (!err && rows[0]) {
+      res.render('actualitzacions', { rows });
+    } else {
+      res.render('actualitzacions');
+    }
+  });
+}
+
 exports.interrupcions = (req, res) => {
-  res.render('interrupcions');
+  conn.all('SELECT * FROM interrupcions ORDER BY id DESC', (err, rows) => {
+    if (!err && rows[0]) {
+
+      rows.forEach(row => {
+        row.minuts = diff_minutes(row.data_inici, row.data_fi);
+        // console.log(row.minuts);
+      });
+      res.render('interrupcions', { rows });
+    } else {
+      res.render('interrupcions');
+    }
+  });
 }
 
 // Canviar de mode online o offline --> 0=ONLINE, 1=OFFLINE
@@ -92,6 +111,19 @@ function checkFileExists(filepath, callback) {
       callback(error)
     });
   });
+}
+
+function diff_minutes(dt1, dt2) {
+  dt1c = new Date(dt1.substring(0, 4), (dt1.substring(4, 6)-1), dt1.substring(6, 8), dt1.substring(8, 10), dt1.substring(10, 12), dt1.substring(12, 14));
+  if (dt2 == null) {
+    dt2c = new Date();
+    console.log(dt1c);
+    console.log(dt2c);
+  } else {
+    dt2c = new Date(dt2.substring(0, 4), (dt2.substring(4, 6)-1), dt2.substring(6, 8), dt2.substring(8, 10), dt2.substring(10, 12), dt2.substring(12, 14));
+  }
+  var diff = (dt2c - dt1c) / 60000;
+  return Math.abs(Math.round(diff));
 }
 
 exports.checkFileExists = checkFileExists; 

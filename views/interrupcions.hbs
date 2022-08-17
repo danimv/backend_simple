@@ -12,37 +12,31 @@
 {{/if}} --}}
 
 <div class="row">
-  <div class="col-5">
-    <h4 style="color:rgb(9, 120, 231);padding-top: 3%;">INTERRUPCIONS DE SERVEI</h4>
+  <div class="col-12">
+    <h4 style="color:rgb(9, 120, 231);padding-top: 3%;text-align:center;">INTERRUPCIONS DE SERVEI</h4>
   </div>  
 </div>
 <div class="table-responsive">
-<table class="table table-bordered" style="font-size:medium;">
+<table id="tableF" class="table table-bordered" style="font-size:medium;">
   <thead class="thead-dark">
     <tr>
       <th scope="col">Data inici</th>
       <th scope="col">Data fi</th>
-      <th scope="col">Duració (minuts)</th>
-      <th scope="col">Voltatges</th>
-      <th scope="col">Intensitats</th>      
+      <th scope="col">Interrupció (minuts)</th>
+      <th scope="col">Voltatges (V)</th>
+      <th scope="col">Intensitats (A)</th>      
     </tr>
   </thead>
-  {{!-- <tbody>    
+  <tbody>    
     {{#each rows}}
       <tr>
-      <td scope="row">{{this.idComunitat}}</th>      
-      <td>{{this.nom}}</td>
-      <td>{{this.cognoms}}</td>
-      <td>{{this.email}}</td>
-      <td style="text-align: center;"><b>{{this.coeficient}}</b></td>
-      <td>{{this.estat}}</td>      
-      <td style="width: 17%;" class="text-end">
-        <a style="font-size:100%"; href="/usuaris/viewuser/{{this.idUsuari}}" type="button" class="btn btn-light btn"><i style="font-size: 115%;" class="bi bi-eye 2xs"></i> Info</a>
-        <a style="font-size:100%"; href="/usuaris/edituser/{{this.idUsuari}}" type="button" class="btn btn-light btn"><i style="font-size: 115%;"  class="bi bi-pencil"></i>
-          Edita</a>       
-      </td>
+      <td scope="row">{{this.data_inici}}</th>      
+      <td>{{this.data_fi}}</td>      
+      <td>{{this.minuts}}</td>
+      <td>{{this.voltatges}}</td>
+      <td>{{this.intensitats}}</td>            
     </tr>
     {{/each}}
-  </tbody> --}}
+  </tbody>
 </table>
 </div>

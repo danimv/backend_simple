@@ -17,7 +17,7 @@ exports.init = (req, res) => {
   token = req.headers.authorization;
   data = exportedC.calcularData();
   message = "";
-  tipus="init";
+  tipus="Dades comunitat";
   // backupDb();
   // deleteTable('comunitat');
   // Sqlite connexió 
@@ -67,10 +67,10 @@ exports.init = (req, res) => {
 exports.update = (req, res) => {
   data = exportedC.calcularData();
   message = "";
-  tipus="update";
+  tipus="Actualització usuaris";
   var { users, idComunitat } = req.body;
-  console.log(req.headers);
-  console.log(req.headers.authorization);
+  // console.log(req.headers);
+  // console.log(req.headers.authorization);
   token = req.headers.authorization;
   // exportedC.checkFileExists(location, function check(error) {
   // if (!error) {
@@ -126,9 +126,9 @@ exports.update = (req, res) => {
 }
 // { "idComunitat":"1",
 //   "users":[
-//   {"idUsuari":"1001","nom":"A", "cognoms":"M", "telefon":"628611940", "coeficient":"0,755", "estat":"1", "vinculat":"1"},
-//    {"idUsuari":"1002","nom":"T", "cognoms":"C", "telefon":"64343423", "coeficient":"0.98","estat":"1","vinculat":"0"},
-//    {"idUsuari":"1003","nom":"J", "cognoms":"O", "telefon":"984432234", "coeficient":"0,33","estat":"1","vinculat":"0"}
+//   {"idUsuari":"1","nom":"A", "cognoms":"M", "telefon":"628611940", "coeficient":"0,755", "estat":"1", "vinculat":"1"},
+//    {"idUsuari":"2","nom":"T", "cognoms":"C", "telefon":"64343423", "coeficient":"0.98","estat":"1","vinculat":"0"},
+//    {"idUsuari":"3","nom":"J", "cognoms":"O", "telefon":"984432234", "coeficient":"0,33","estat":"1","vinculat":"0"}
 //  ]
 //  }
 
