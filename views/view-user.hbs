@@ -9,12 +9,12 @@
   {{#each rows}}
   <div class="row mb-1">
     <div class="col text-center">
-      <h3>{{this.nom}} {{this.cognoms}} - Id usuari {{this.idUsuari}}</h3>
+      <h5 style="color:rgb(9, 120, 231);text-align:center;">{{this.nom}} {{this.cognoms}} - Usuari nº {{this.idUsuari}}</h5>
     </div>
   </div>
   <div class="row">
     <div class="table-responsive">
-      <table class="table">
+      <table class="table table-borderless table-sm">
         <thead>
           <tr>
             <th scope="col">Data alta</th>
@@ -58,8 +58,11 @@
   </div>
   {{/each}}
 
-  <div class="table-responsive">
-    <table class="table table-bordered" style="font-size:medium;margin-top:1%">
+  <div class="table-responsive" style="margin-top:3%">
+    <div class="col text-center">
+       <h6 style="color:rgb(9, 120, 231);text-align:center;">HISTÒRIC D'ACTUALITZACIONS</h6>
+     </div>
+    <table id="tableF" class="table table-bordered" style="font-size:medium;">
       <thead class="thead-dark">
         <tr>
           <th style="width: 25%;" scope="col">Data modificació</th>

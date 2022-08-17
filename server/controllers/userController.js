@@ -207,7 +207,7 @@ exports.viewall = (req, res) => {
   conn.all('SELECT * FROM usuari WHERE idUsuari = ?', [req.params.idUsuari], (err, rows) => {
     conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows1) => {
       if (!err) {
-        conn.all('SELECT * FROM coeficient WHERE idUsuari = ? ORDER BY data ASC', [req.params.idUsuari], (err, rows2) => {
+        conn.all('SELECT * FROM coeficient WHERE idUsuari = ? ORDER BY data DESC', [req.params.idUsuari], (err, rows2) => {
           if (!err) {
             calculaCoeficient(function getCoeficient(result) {
               alert2 = result[1];
