@@ -11,7 +11,7 @@ let conn = exportedD.dbConnection();
 var LocalStorage = require('node-localstorage').LocalStorage;
 localStorage = new LocalStorage('./scratch');
 
-// Vinculació comunitat amb servidor extern
+// Vinculació de comunitat amb servidor extern
 exports.init = (req, res) => {
   var { idComunitat, nomComunitat, comentaris } = req.body;
   token = req.headers.authorization;
