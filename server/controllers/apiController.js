@@ -78,14 +78,18 @@ exports.update = (req, res) => {
                     var donatAlta = false;
                     if (rows2[0]) {
                       rows2.forEach(row2 => {
-                        if (row2.idUsuari == users[i].idUsuari && donatAlta == false) {
+                        if (row2.idUsuari && users[i].idUsuari && row2.idUsuari == users[i].idUsuari && donatAlta == false) {
                           donatAlta = true;
                           dataAlta = row2.dataAlta;
                         }
                       });
                     }
+                    if (users[i].coeficient){
                     coeficient = users[i].coeficient;
                     coeficient = coeficient.replace(",", ".");
+                    }else{
+                    coeficient = 0.0;
+                    }
                     if (!donatAlta) {
                       dataAlta = data;
                     }
