@@ -23,35 +23,33 @@ exports.init = (req, res) => {
   // Sqlite connexió 
   // exportedC.checkFileExists(location, function check(error) {
   // if (!error) {
-  // conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
-  //   if (!err) {
-  //     if (rows.length == 0 || rows[0].mode == 0) {
-  //       if (nomComunitat && idComunitat) {
-  //         nomComunitat = nomComunitat.toUpperCase();
-  //         conn.all('INSERT INTO comunitat(idComunitat, nomComunitat, comentaris, sync,mode) VALUES (?,?,?,?,?)', [idComunitat, nomComunitat, comentaris, 1, 0], (err, rows) => {
-  //           if (!err) {
-  //             message = 'Comunitat vinculada';
-  //             httpResponse(req, res, 200, 'OK', message, insertApiTable);
-  //           } else {
-  //             message = 'Comunitat no vinculada. Error de base de dades: ' + err;
-  //             httpResponse(req, res, 400, 'KO', message, insertApiTable);
-  //           }
-  //         });
-  //       } else {
-  //         message = 'Comunitat no vinculada. Falta idComunitat o nomComunitat';
-  //         httpResponse(req, res, 400, 'KO', message, insertApiTable);
-  //       }
-  //     } else {
-  //       message = 'Mode Offline, no és possible actualitzar dades ';
-  //       httpResponse(req, res, 400, 'KO', message, insertApiTable);
-  //     }
-  //   } else {
-  //     message = 'Comunitat no vinculada. Error de base de dades: ' + err;
-  //     httpResponse(req, res, 400, 'KO', message, insertApiTable);
-  //   }
-  // });
-  message = 'Test';
+  conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
+    if (!err) {
+      if (rows.length == 0 || rows[0].mode == 0) {
+        if (nomComunitat && idComunitat) {
+          nomComunitat = nomComunitat.toUpperCase();
+          conn.all('INSERT INTO comunitat(idComunitat, nomComunitat, comentaris, sync,mode) VALUES (?,?,?,?,?)', [idComunitat, nomComunitat, comentaris, 1, 0], (err, rows) => {
+            if (!err) {
+              message = 'Comunitat vinculada';
+              httpResponse(req, res, 200, 'OK', message, insertApiTable);
+            } else {
+              message = 'Comunitat no vinculada. Error de base de dades: ' + err;
+              httpResponse(req, res, 400, 'KO', message, insertApiTable);
+            }
+          });
+        } else {
+          message = 'Comunitat no vinculada. Falta idComunitat o nomComunitat';
+          httpResponse(req, res, 400, 'KO', message, insertApiTable);
+        }
+      } else {
+        message = 'Mode Offline, no és possible actualitzar dades ';
+        httpResponse(req, res, 400, 'KO', message, insertApiTable);
+      }
+    } else {
+      message = 'Comunitat no vinculada. Error de base de dades: ' + err;
       httpResponse(req, res, 400, 'KO', message, insertApiTable);
+    }
+  });
 }
 // {"idComunitat":"1",
 // "nomComunitat":"Cornella del Terri"}
