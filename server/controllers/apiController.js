@@ -14,7 +14,7 @@ localStorage = new LocalStorage('./scratch');
 // Vinculació de comunitat amb servidor extern
 exports.init = (req, res) => {
   var { idComunitat, nomComunitat, comentaris } = req.body;
-  token = req.headers.authorization;
+  //token = req.headers.authorization;
   data = exportedC.calcularData();
   message = "";
   tipus = "Dades comunitat";
@@ -31,23 +31,23 @@ exports.init = (req, res) => {
           conn.all('INSERT INTO comunitat(idComunitat, nomComunitat, comentaris, sync,mode) VALUES (?,?,?,?,?)', [idComunitat, nomComunitat, comentaris, 1, 0], (err, rows) => {
             if (!err) {
               message = 'Comunitat vinculada';
-              httpResponse(req, res, 200, 'OK', message, insertApiTable);
+              httpResponse(req, res, 200, 'OK', message);
             } else {
               message = 'Comunitat no vinculada. Error de base de dades: ' + err;
-              httpResponse(req, res, 400, 'KO', message, insertApiTable);
+              httpResponse(req, res, 400, 'KO', message);
             }
           });
         } else {
           message = 'Comunitat no vinculada. Falta idComunitat o nomComunitat';
-          httpResponse(req, res, 400, 'KO', message, insertApiTable);
+          httpResponse(req, res, 400, 'KO', message);
         }
       } else {
         message = 'Mode Offline, no és possible actualitzar dades ';
-        httpResponse(req, res, 400, 'KO', message, insertApiTable);
+        httpResponse(req, res, 400, 'KO', message);
       }
     } else {
       message = 'Comunitat no vinculada. Error de base de dades: ' + err;
-      httpResponse(req, res, 400, 'KO', message, insertApiTable);
+      httpResponse(req, res, 400, 'KO', message);
     }
   });
 }
@@ -198,7 +198,7 @@ function updateCoeficientsTable(data) {
 }
 
 // Resposta http
-function httpResponse(req, res, code, strResult, msg, callback) {
+function httpResponse(req, res, code, strResult, msg) {
   res.statusCode = code;
   res.setHeader('Content-Type', 'application/json');
   const body = {
