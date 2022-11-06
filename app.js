@@ -5,7 +5,7 @@ const exphbs = require('express-handlebars');
 const session = require('express-session');
 let alert = require('alert');
 const app = express();
-const port = process.env.PORT || 5010;
+const port = process.env.PORT || 80;
 
 // Parsing middleware
 // app.use(bodyParser.urlencoded({ extended: false }));
