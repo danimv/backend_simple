@@ -73,7 +73,7 @@ exports.update = (req, res) => {
                 backupDb();
                 deleteTable('usuari');
                 conn.serialize(function (err, rows) {
-                  let stmt = conn.prepare('INSERT INTO usuari(idUsuari,dataAlta, dataActualitzacio, nom, cognoms, email, telefon, coeficient, estat, vinculat, comentaris) VALUES(?,?,?,?,?,?,?,?,?,?,?)');
+                  let stmt = conn.prepare('INSERT INTO usuari(idUsuari, dataAlta, dataActualitzacio, nom, coeficient, estat, vinculat, comentaris) VALUES(?,?,?,?,?,?,?,?)');
                   for (let i = 0; i < users.length; i++) {
                     var donatAlta = false;
                     if (rows2[0]) {
@@ -93,7 +93,7 @@ exports.update = (req, res) => {
                     if (!donatAlta) {
                       dataAlta = data;
                     }
-                    stmt.run(users[i].idUsuari, dataAlta, data, users[i].nom, users[i].cognoms, users[i].email, users[i].telefon, coeficient, users[i].estat, users[i].vinculat, users[i].comentaris);
+                    stmt.run(users[i].idUsuari, dataAlta, data, users[i].nom, coeficient, users[i].estat, users[i].vinculat, users[i].comentaris);
                   }
                   stmt.finalize();
                   updateCoeficientsTable(data);
@@ -174,11 +174,11 @@ function updateCoeficientsTable(data) {
       rows.forEach(row => {
         rows2.forEach(row2 => {
           if (row.idUsuari == row2.idUsuari) {
-            if (row2.coeficient == row.coeficient) {
+            if (data.substring(0, 6) == rows2.substring(0, 6)) {
               // console.log(row.coeficient);
               // console.log(row2.coeficient);
-              //conn.all('UPDATE coeficient SET coeficient = ?, data = ? WHERE idUsuari = ?', [row.coeficient, row.data, row.idUsuari], (err, rows4) => {
-              // });
+              conn.all('UPDATE coeficient SET coeficient = ?, data = ? WHERE idUsuari = ? ORDER BY data DESC', [row.coeficient, row.data, row.idUsuari], (err, rows4) => {
+               });
               found = true;
             }
 
