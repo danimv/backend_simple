@@ -5,6 +5,7 @@ var crypto = require('crypto');
 var base64url = require('base64url');
 const exportedC = require('../controllers/userController');
 const exportedD = require('../db/dbDriver');
+const { exit } = require('process');
 const location = exportedD.dbLocation();
 const locationBackup = exportedD.dbLocationBackup();
 let conn = exportedD.dbConnection();
@@ -179,9 +180,8 @@ function updateCoeficientsTable(data) {
               // console.log(row2.coeficient);
               conn.all('UPDATE coeficient SET coeficient = ?, data = ? WHERE idUsuari = ? ORDER BY data DESC', [row.coeficient, row.data, row.idUsuari], (err, rows4) => {
                });
-              found = true;
+              found = true;              
             }
-
           }
         });
         if (found == false) {
