@@ -177,6 +177,7 @@ function updateCoeficientsTable(data) {
           if (row.idUsuari === row2.idUsuari) {
             //Comprovar si aquest coef ja és l´últim que hi ha
             if (row.coeficient === row2.coeficient) {
+              found = true;
               exit;
             // Comprovar si aquest mes té coeficient
             } else if (row2.data && data.substring(0, 6) === row2.data.substring(0, 6)) {
