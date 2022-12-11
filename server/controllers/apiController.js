@@ -174,11 +174,9 @@ function updateCoeficientsTable(data) {
     conn.all('SELECT * FROM coeficient ORDER BY idCoeficient DESC', (err, rows2) => {
       rows.forEach(row => {
         rows2.forEach(row2 => {
-          if (row.idUsuari == row2.idUsuari) {
-            if (data.substring(0, 6) == rows2.substring(0, 6)) {
-              // console.log(row.coeficient);
-              // console.log(row2.coeficient);
-              conn.all('UPDATE coeficient SET coeficient = ?, data = ? WHERE idUsuari = ? ORDER BY data DESC', [row.coeficient, row.data, row.idUsuari], (err, rows4) => {
+          if (row.idUsuari === row2.idUsuari) {                       
+            if (row2.data && data.substring(0, 6) === row2.data.substring(0, 6)) {                         
+              conn.all('UPDATE coeficient SET coeficient = ?, data = ? WHERE idUsuari = ? AND data = ?', [row.coeficient, data, row.idUsuari, row2.data], (err, rows4) => {
                });
               found = true;              
             }
