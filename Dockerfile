@@ -1,6 +1,9 @@
 # syntax=docker/dockerfile:1
 FROM node:12-alpine
-RUN apk add --no-cache python3 g++ make
+#RUN apk add --no-cache python3 g++ make
+RUN apk add --no-cache python3 g++ make \
+    && mkdir -p /usr/src/app
+WORKDIR /usr/src/app
 
 COPY . .
 
