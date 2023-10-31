@@ -8,8 +8,8 @@ WORKDIR /home/app
 COPY . .
 
 RUN yarn install --production
-CMD ["node", "src/app.js"]
-#CMD ["node", "app.js"]
+#CMD ["node", "src/app.js"]
+CMD ["node", "app.js"]
 EXPOSE 5010
 
 # FROM node:12-alpine
